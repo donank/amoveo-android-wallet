@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import donank.amoveowallet.Dagger.MainApplication
 
-class Wallet : Fragment() {
-
+class Settings : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity!!.application as MainApplication).component.inject(this)
@@ -22,4 +21,5 @@ class Wallet : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
     }
+
 }
