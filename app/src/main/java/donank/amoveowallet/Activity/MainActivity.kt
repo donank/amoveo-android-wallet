@@ -1,7 +1,8 @@
-package donank.amoveowallet
+package donank.amoveowallet.Activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import donank.amoveowallet.R
 
 class MainActivity : AppCompatActivity() {
 
