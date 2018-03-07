@@ -2,11 +2,14 @@ package donank.amoveowallet.Dagger
 
 import android.app.Application
 import android.arch.persistence.room.Room
+import com.squareup.moshi.KotlinJsonAdapterFactory
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import donank.amoveowallet.Api.RESTInterface
 import donank.amoveowallet.Data.AppDatabase
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -28,11 +31,23 @@ class AppModule(private val app: Application) {
     @Singleton
     fun providesDao(database: AppDatabase) = database.walletDao()
 
-    @Singleton
-    @Provides
-    fun provideHttp() = OkHttpClient.Builder().connectTimeout(20,TimeUnit.SECONDS).build()
 
-    @Singleton
     @Provides
-    fun ProvideRESTInterface(httpClient: OkHttpClient) = RESTInterface.create(httpClient)
+    @Singleton
+    fun provideJson(): Moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
+
+    @Provides
+    @Singleton
+    fun provideHttp(): OkHttpClient {
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        return OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).addInterceptor(interceptor).build()
+    }
+
+    @Provides
+    @Singleton
+    fun ProvideRESTInterface(httpClient: OkHttpClient, moshi: Moshi) = RESTInterface.create(httpClient, moshi)
 }

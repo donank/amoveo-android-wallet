@@ -53,8 +53,6 @@ dependencies {
     implementation "com.chibatching.kotpref:kotpref:$kotpref_version"
     implementation "com.chibatching.kotpref:initializer:$kotpref_version"
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21.2'
-
     //dagger
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
@@ -87,8 +85,18 @@ dependencies {
 
     // RxJava support for Room
     implementation "android.arch.persistence.room:rxjava2:1.0.0"
+
+    //QR Gen
+    implementation 'com.github.kenglxn.QRGen:android:2.4.0'
+
+    //SpinKit
+    implementation 'com.github.ybq:Android-SpinKit:1.1.0'
+
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
 }
 repositories {
     mavenCentral()
     google()
+    maven { url "https://jitpack.io" }
 }

@@ -26,4 +26,44 @@
             app:srcCompat="@android:drawable/ic_input_add"
             android:layout_gravity="bottom|end"/>
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/input_address_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffff"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edit_input_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom">
+
+            <Button
+                android:id="@+id/submit_address_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SUBMIT"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/address_cancel_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CANCEL"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 </LinearLayout>
