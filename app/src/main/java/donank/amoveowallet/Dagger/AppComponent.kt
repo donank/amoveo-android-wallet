@@ -3,10 +3,7 @@ package donank.amoveowallet.Dagger
 import android.app.Application
 import dagger.Component
 import donank.amoveowallet.Activity.MainActivity
-import donank.amoveowallet.Fragments.Dashboard
-import donank.amoveowallet.Fragments.Explorer
-import donank.amoveowallet.Fragments.Settings
-import donank.amoveowallet.Fragments.Wallet
+import donank.amoveowallet.Fragments.*
 import javax.inject.Singleton
 
 @Singleton
@@ -18,4 +15,5 @@ interface AppComponent {
     fun inject(explorer: Explorer)
     fun inject(settings: Settings)
     fun inject(wallet: Wallet)
+    fun inject(peer: Peer)
 }

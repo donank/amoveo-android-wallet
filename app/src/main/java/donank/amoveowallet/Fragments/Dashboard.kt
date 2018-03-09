@@ -4,8 +4,11 @@ import android.app.AlertDialog
 import android.databinding.ObservableArrayList
 import android.os.AsyncTask
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Base64
+import android.util.Base64.DEFAULT
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +16,7 @@ import android.view.ViewGroup
 import com.github.nitrico.lastadapter.LastAdapter
 import donank.amoveowallet.Api.RESTInterface
 import donank.amoveowallet.BR
+import donank.amoveowallet.Common.showInSnack
 import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.Data.AddressDao
 import donank.amoveowallet.R
@@ -77,16 +81,19 @@ class Dashboard : Fragment() {
     fun addAddressToList(){
         hideAddressInputView()
         val inputAddress = edit_input_address.text.toString().replace("\\s+","")
-        validateAddress(inputAddress)
-        val address = AddressModel(
-                address = inputAddress,
-                value = 0
-        )
-        addresses.add(address)
-        getAddressValue(address)
-        saveAddressToDb(address)
-        lastAdapter.notifyDataSetChanged()
-
+        val valid = validateAddress(inputAddress)
+        if(valid){
+            val address = AddressModel(
+                    address = inputAddress,
+                    value = 0
+            )
+            addresses.add(address)
+            getAddressValue(address)
+            saveAddressToDb(address)
+            lastAdapter.notifyDataSetChanged()
+        }else{
+            showInSnack("Invalid Address format")
+        }
     }
 
     fun getAddressValue(address : AddressModel) {
@@ -103,19 +110,27 @@ class Dashboard : Fragment() {
                             lastAdapter.notifyDataSetChanged()
                         }
                     }else{
-                        //todo show error
+                        activity!!.runOnUiThread {
+                            showInSnack("Error loading account details!")
+                        }
                     }
                 },{
-                    //todo show error
+                    activity!!.runOnUiThread {
+                        showInSnack("Error loading account details!")
+                    }
                 })
     }
 
 
     fun validateAddress(address: String): Boolean{
-        val addressIsInvalid = true
+        var addressIsValid = false
         return if(!address.isEmpty()){
-
-            true
+            try {
+                Base64.decode(address,DEFAULT)
+            }catch (e: Exception){
+                addressIsValid = false
+            }
+            addressIsValid
         }else{
             false
         }
@@ -124,7 +139,6 @@ class Dashboard : Fragment() {
     fun saveAddressToDb(address : AddressModel){
         AsyncTask.execute {
             addressDao.save(address)
-            activity!!.runOnUiThread { /*todo show confirmation*/ }
         }
     }
 }

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Amoveo Wallet</string>
+    <string name="change_peer">CHANGE PEER</string>
+    <string name="height">Height</string>
+    <string name="peer">Peer</string>
+    <string name="transactions">Transactions</string>
 </resources>
