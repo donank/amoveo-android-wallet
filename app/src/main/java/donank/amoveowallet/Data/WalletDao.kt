@@ -1,9 +1,7 @@
 package donank.amoveowallet.Data
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Query
-import android.arch.persistence.room.Update
+import android.arch.persistence.room.*
+import donank.amoveowallet.Data.Model.Transaction
 import donank.amoveowallet.Data.Model.Wallet
 
 @Dao
@@ -15,7 +13,10 @@ interface WalletDao {
     @Update
     fun update(wallet: Wallet)
 
-    @Query("select count(*) from wallets")
+    @Query("select count(*) from wallet")
     fun getWalletCount(): Int
+
+    @Query("select * from `transaction` where from_address == :pubkey or to_address == :pubkey")
+    fun getTransactions(pubkey: String):List<Transaction>
 
 }

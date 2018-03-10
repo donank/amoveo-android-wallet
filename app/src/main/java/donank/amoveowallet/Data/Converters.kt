@@ -1,6 +1,8 @@
 package donank.amoveowallet.Data
 
 import android.arch.persistence.room.TypeConverter
+import donank.amoveowallet.Data.Model.TransactionType
+import donank.amoveowallet.Data.Model.WalletType
 
 class Converters {
 
@@ -10,7 +12,17 @@ class Converters {
     }
 
     @TypeConverter
-    fun stringToWalletType(string: String): WalletType{
+    fun stringToWalletType(string: String): WalletType {
         return WalletType.valueOf(string)
+    }
+
+    @TypeConverter
+    fun transactionTypeToString(transactionType: TransactionType): String{
+        return transactionType.name
+    }
+
+    @TypeConverter
+    fun stringToTransactionType(string: String):TransactionType{
+        return TransactionType.valueOf(string)
     }
 }

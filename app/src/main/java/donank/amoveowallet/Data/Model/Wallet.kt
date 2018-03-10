@@ -2,9 +2,8 @@ package donank.amoveowallet.Data.Model
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import donank.amoveowallet.Data.WalletType
 
-@Entity(tableName = "wallets")
+@Entity(tableName = "wallet")
 data class Wallet(
         var address: String,
         var value : Long = 0,

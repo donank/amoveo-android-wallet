@@ -21,7 +21,7 @@ import donank.amoveowallet.Data.WalletDao
 import donank.amoveowallet.R
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import donank.amoveowallet.Data.Model.Wallet
-import donank.amoveowallet.Data.WalletType
+import donank.amoveowallet.Data.Model.WalletType
 import donank.amoveowallet.databinding.ItemWalletBinding
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
