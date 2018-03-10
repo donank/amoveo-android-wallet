@@ -9,7 +9,7 @@ android {
     dataBinding { enabled = true }
     defaultConfig {
         applicationId "donank.amoveowallet"
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"

@@ -15,22 +15,23 @@
             android:id="@+id/appBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@null"
+            android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
                 app:layout_scrollFlags="scroll|enterAlways"/>
+
         </android.support.design.widget.AppBarLayout>
 
         <FrameLayout
+            android:elevation="0dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/fragment_container"/>
-
     </FrameLayout>
 
     <android.support.design.widget.NavigationView

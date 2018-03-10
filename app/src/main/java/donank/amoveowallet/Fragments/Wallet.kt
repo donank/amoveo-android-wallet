@@ -1,6 +1,7 @@
 package donank.amoveowallet.Fragments
 
 import android.databinding.ObservableArrayList
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -31,7 +32,7 @@ class Wallet : Fragment() {
 
     fun initLastAdapter() : LastAdapter{
         return LastAdapter(transactions, BR.item)
-                .map<Wallet, ItemTransactionBinding>(R.layout.item_transaction)
+                .map<Transaction, ItemTransactionBinding>(R.layout.item_transaction)
                 .into(transactions_recycler)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,8 +46,5 @@ class Wallet : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-
-
     }
 }

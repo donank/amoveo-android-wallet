@@ -6,13 +6,13 @@ import android.support.v4.app.FragmentManager
 import android.view.View
 import android.graphics.Color
 import android.widget.TextView
-
-
+import donank.amoveowallet.R
 
 
 fun Fragment.showFragment(container: Int, fragmentManager: FragmentManager,
                           addToBackStack: Boolean = false) {
     val fm = fragmentManager.beginTransaction()
+    fm.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out)
     fm.replace(container, this, this.javaClass.simpleName)
     if (addToBackStack) fm.addToBackStack(null)
     fm.commit()

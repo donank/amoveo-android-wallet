@@ -2,8 +2,10 @@ package donank.amoveowallet.Activity
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -16,6 +18,8 @@ import android.support.v4.view.GravityCompat
 import android.view.MenuItem
 import android.view.View
 import donank.amoveowallet.Fragments.Peer
+import donank.amoveowallet.Fragments.Wallet
+import kotlin.math.absoluteValue
 
 
 class MainActivity : AppCompatActivity(){
@@ -59,7 +63,7 @@ class MainActivity : AppCompatActivity(){
                 R.id.nav_contacts->showFragment(
                         Fragment.instantiate(
                                 this,
-                                Dashboard::class.java.name
+                                Wallet::class.java.name
                         ),
                         addToBackStack = false
                 )
@@ -80,7 +84,6 @@ class MainActivity : AppCompatActivity(){
         when(item!!.itemId){
             android.R.id.home -> {
                 drawer_layout.openDrawer(GravityCompat.START)
-                true
             }
         }
         return super.onOptionsItemSelected(item)

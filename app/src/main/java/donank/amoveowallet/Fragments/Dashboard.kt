@@ -5,6 +5,7 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Base64
 import android.util.Base64.DEFAULT
 import android.view.LayoutInflater
@@ -24,12 +25,14 @@ import donank.amoveowallet.Data.Model.Wallet
 import donank.amoveowallet.Data.Model.WalletType
 import donank.amoveowallet.databinding.ItemWalletBinding
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_wallet.view.*
 import javax.inject.Inject
 
 class Dashboard : Fragment() {
 
     private val wallets = ObservableArrayList<Wallet>()
-    private val lastAdapter: LastAdapter by lazy { initLastAdapter() }
+    private val lastAdapter: LastAdapter by lazy { initLastAdapter(wallet_recycler) }
+    private val watchlastAdapter: LastAdapter by lazy { initLastAdapter(watch_address_recycler) }
 
     @Inject
     lateinit var walletDao: WalletDao
@@ -38,7 +41,7 @@ class Dashboard : Fragment() {
     lateinit var restInterface: RESTInterface
 
 
-    fun initLastAdapter() : LastAdapter{
+    fun initLastAdapter(recycler : RecyclerView) : LastAdapter{
         return LastAdapter(wallets, BR.item)
                 .map<Wallet, ItemWalletBinding>(R.layout.item_wallet){
                     onBind {
@@ -51,9 +54,13 @@ class Dashboard : Fragment() {
                                     addToBackStack = false
                             )
                         }
+                        val addrLen = it.binding.item!!.address.length
+                        val first4 = it.binding.item!!.address.substring(0,4)
+                        val last4 = it.binding.item!!.address.substring(addrLen-4, addrLen)
+                        it.itemView.tv_wallet_address.text = first4.plus(last4)
                     }
                 }
-                .into(wallet_recycler)
+                .into(recycler)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +77,9 @@ class Dashboard : Fragment() {
 
         wallet_recycler.layoutManager = LinearLayoutManager(activity)
         wallet_recycler.adapter = lastAdapter
+
+        watch_address_recycler.adapter = watchlastAdapter
+        watch_address_recycler.layoutManager = LinearLayoutManager(activity)
 
         add_account_btn.setOnClickListener {
             showAddressInputView()
