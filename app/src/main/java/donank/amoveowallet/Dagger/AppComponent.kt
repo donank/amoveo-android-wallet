@@ -16,4 +16,5 @@ interface AppComponent {
     fun inject(settings: Settings)
     fun inject(wallet: Wallet)
     fun inject(peer: Peer)
+    fun inject(contacts: Contacts)
 }

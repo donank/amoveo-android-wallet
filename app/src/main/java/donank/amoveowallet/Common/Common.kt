@@ -1,14 +1,13 @@
 package donank.amoveowallet.Common
 
-import android.content.Context
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import donank.amoveowallet.Dagger.MainApplication
-import donank.amoveowallet.R
+import android.graphics.Color
+import android.widget.TextView
+
+
 
 
 fun Fragment.showFragment(container: Int, fragmentManager: FragmentManager,
@@ -19,6 +18,12 @@ fun Fragment.showFragment(container: Int, fragmentManager: FragmentManager,
     fm.commit()
 }
 
-fun showInSnack(text: String, context: Context = MainApplication.instance){
-    Snackbar.make(View.inflate(context,R.layout.custom_snackbar,null),text,Snackbar.LENGTH_SHORT)
+fun showInSnack(view: View, text: String, duration: Int = Snackbar.LENGTH_LONG) {
+    val snackbar = Snackbar.make(view, text, duration)
+    val sbView = snackbar.view
+    val textView = sbView.findViewById<View>(android.support.design.R.id.snackbar_text) as TextView
+    textView.setTextColor(Color.WHITE)
+    textView.textSize = 12f
+    snackbar.setAction("OK") { snackbar.dismiss() }
+    snackbar.show()
 }

@@ -1,46 +1,58 @@
 package donank.amoveowallet.Fragments
 
-import android.app.AlertDialog
 import android.databinding.ObservableArrayList
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Base64
 import android.util.Base64.DEFAULT
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import com.github.nitrico.lastadapter.LastAdapter
 import donank.amoveowallet.Api.RESTInterface
 import donank.amoveowallet.BR
+import donank.amoveowallet.Common.showFragment
 import donank.amoveowallet.Common.showInSnack
 import donank.amoveowallet.Dagger.MainApplication
-import donank.amoveowallet.Data.AddressDao
+import donank.amoveowallet.Data.WalletDao
 import donank.amoveowallet.R
 import kotlinx.android.synthetic.main.fragment_dashboard.*
-import donank.amoveowallet.Data.AddressModel
-import donank.amoveowallet.databinding.ItemAddressBinding
+import donank.amoveowallet.Data.Model.Wallet
+import donank.amoveowallet.Data.WalletType
+import donank.amoveowallet.databinding.ItemWalletBinding
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class Dashboard : Fragment() {
 
-    private val addresses = ObservableArrayList<AddressModel>()
+    private val wallets = ObservableArrayList<Wallet>()
     private val lastAdapter: LastAdapter by lazy { initLastAdapter() }
 
     @Inject
-    lateinit var addressDao: AddressDao
+    lateinit var walletDao: WalletDao
 
     @Inject
     lateinit var restInterface: RESTInterface
 
 
     fun initLastAdapter() : LastAdapter{
-        return LastAdapter(addresses, BR.item)
-                .map<AddressModel, ItemAddressBinding>(R.layout.item_address)
+        return LastAdapter(wallets, BR.item)
+                .map<Wallet, ItemWalletBinding>(R.layout.item_wallet){
+                    onBind {
+                        it.itemView.setOnClickListener {
+                            showFragment(
+                                    Fragment.instantiate(
+                                            activity,
+                                            Wallet::class.java.name
+                                    ),
+                                    addToBackStack = false
+                            )
+                        }
+                    }
+                }
                 .into(wallet_recycler)
     }
 
@@ -59,70 +71,105 @@ class Dashboard : Fragment() {
         wallet_recycler.layoutManager = LinearLayoutManager(activity)
         wallet_recycler.adapter = lastAdapter
 
-        add_address_btn.setOnClickListener {
+        add_account_btn.setOnClickListener {
             showAddressInputView()
         }
-        submit_address_btn.setOnClickListener {
-            addAddressToList()
+        submit_account_btn.setOnClickListener {
+            when {
+                edit_account_address.text.isEmpty() -> {
+                    hideAddressInputView()
+                    showInSnack(this.view!!,"Input Address is empty")
+                }
+                edit_account_address.text.length % 4 != 0 -> {
+                    hideAddressInputView()
+                    showInSnack(this.view!!,"Input Address is invalid")
+                }
+                else -> addAddressToList()
+            }
         }
-        address_cancel_btn.setOnClickListener {
+        account_cancel_btn.setOnClickListener {
             hideAddressInputView()
+        }
+
+        choose_account_type.setOnCheckedChangeListener{ compoundButton: CompoundButton, b: Boolean ->
+            if(b){
+                edit_account_password.visibility = View.GONE
+            }else{
+                edit_account_password.visibility = View.VISIBLE
+            }
         }
     }
 
     fun showAddressInputView(){
-        input_address_layout.visibility = View.VISIBLE
+        var count = ""
+        AsyncTask.execute {
+            count = walletDao.getWalletCount().toString()
+        }
+        edit_account_name.setText("Wallet".plus(count + 1))
+        add_account_btn.visibility = View.GONE
+        add_account_layout.visibility = View.VISIBLE
+
     }
 
     fun hideAddressInputView(){
-        input_address_layout.visibility = View.GONE
+        add_account_layout.visibility = View.GONE
+        add_account_btn.visibility = View.VISIBLE
     }
 
     fun addAddressToList(){
         hideAddressInputView()
-        val inputAddress = edit_input_address.text.toString().replace("\\s+","")
+        val inputName = edit_account_name.text.toString()
+        val walletType = if(choose_account_type.isChecked) WalletType.WATCH
+                            else WalletType.SINGLE
+        val inputAddress = edit_account_address.text.toString().replace("\\s+","")
+        val inputPassword = edit_account_password.text.toString().replace("\\s+","")
         val valid = validateAddress(inputAddress)
         if(valid){
-            val address = AddressModel(
+
+            val address = Wallet(
                     address = inputAddress,
-                    value = 0
+                    value = 0,
+                    name = inputName,
+                    password = inputPassword,
+                    type = walletType
             )
-            addresses.add(address)
+            wallets.add(address)
+            lastAdapter.notifyDataSetChanged()
             getAddressValue(address)
             saveAddressToDb(address)
-            lastAdapter.notifyDataSetChanged()
         }else{
-            showInSnack("Invalid Address format")
+            showInSnack(this.view!!,"Invalid Address format")
         }
     }
 
-    fun getAddressValue(address : AddressModel) {
-        val command = """["account","${address.address}"]"""
+    fun getAddressValue(wallet : Wallet) {
+        val command = """["account","${wallet.address}"]"""
         restInterface.postRequest(command)
                 .subscribeOn(Schedulers.newThread())
                 .subscribe({
                     val res = it.replace("\\s+","").split(",")
                     if(res[0] == """["ok""""){
-                        address.value = res[2].toLong()
-                        addressDao.update(address)
+                        wallet.value = res[2].toLong()
+                        walletDao.update(wallet)
                         activity!!.runOnUiThread {
-                            addresses.filter { it.address == address.address }.forEach { it.value = address.value }
+                            wallets.filter { it.address == wallet.address }.forEach { it.value = wallet.value }
                             lastAdapter.notifyDataSetChanged()
                         }
                     }else{
                         activity!!.runOnUiThread {
-                            showInSnack("Error loading account details!")
+                            showInSnack(this.view!!,"Error loading account details!")
                         }
                     }
                 },{
                     activity!!.runOnUiThread {
-                        showInSnack("Error loading account details!")
+                        //showInSnack("Error loading account details!")
                     }
                 })
     }
 
 
     fun validateAddress(address: String): Boolean{
+
         var addressIsValid = false
         return if(!address.isEmpty()){
             try {
@@ -136,9 +183,15 @@ class Dashboard : Fragment() {
         }
     }
 
-    fun saveAddressToDb(address : AddressModel){
+    fun saveAddressToDb(wallet : Wallet){
         AsyncTask.execute {
-            addressDao.save(address)
+            walletDao.save(wallet)
         }
+    }
+
+    private fun showFragment(fragment: Fragment, addToBackStack: Boolean = true) {
+        fragment.showFragment(container = R.id.fragment_container,
+                fragmentManager = activity!!.supportFragmentManager,
+                addToBackStack = addToBackStack)
     }
 }

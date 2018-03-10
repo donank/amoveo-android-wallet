@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.R
 
-class Explorer : Fragment() {
+class Contacts : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,9 +17,10 @@ class Explorer : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_explorer,container,false)
+            inflater.inflate(R.layout.fragment_contacts,container,false)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
     }
 }
