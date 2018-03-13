@@ -13,6 +13,7 @@
         android:layout_marginLeft="20dp">
 
         <TextView
+            android:layout_marginTop="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Total Balance"
@@ -26,17 +27,12 @@
             android:textSize="40sp"/>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/watch_address_recycler"
+            android:id="@+id/wallet_recycler"
             android:layout_width="wrap_content"
             android:layout_height="200dp"
             android:layout_marginTop="20dp" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/wallet_recycler"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal" />
+
     </LinearLayout>
 
 

@@ -14,7 +14,7 @@ data class Transaction(
         var toAddress: String,
         @ColumnInfo(name = "tx_id")
         var txId: String,
-        var value : Double,
+        var value : Long,
         var type : TransactionType,
         @PrimaryKey(autoGenerate = true)
         var id: Long = 0

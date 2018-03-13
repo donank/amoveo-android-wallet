@@ -47,4 +47,12 @@ class Wallet : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
     }
+
+    fun createTransaction(){
+
+    }
+
+    fun signTransaction(){
+        
+    }
 }

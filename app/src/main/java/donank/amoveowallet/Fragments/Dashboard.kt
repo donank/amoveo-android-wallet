@@ -31,8 +31,8 @@ import javax.inject.Inject
 class Dashboard : Fragment() {
 
     private val wallets = ObservableArrayList<Wallet>()
-    private val lastAdapter: LastAdapter by lazy { initLastAdapter(wallet_recycler) }
-    private val watchlastAdapter: LastAdapter by lazy { initLastAdapter(watch_address_recycler) }
+    private val lastAdapter: LastAdapter by lazy { initLastAdapter() }
+    //private val watchlastAdapter: LastAdapter by lazy { initLastAdapter(watch_address_recycler) }
 
     @Inject
     lateinit var walletDao: WalletDao
@@ -41,7 +41,7 @@ class Dashboard : Fragment() {
     lateinit var restInterface: RESTInterface
 
 
-    fun initLastAdapter(recycler : RecyclerView) : LastAdapter{
+    fun initLastAdapter() : LastAdapter{
         return LastAdapter(wallets, BR.item)
                 .map<Wallet, ItemWalletBinding>(R.layout.item_wallet){
                     onBind {
@@ -57,10 +57,10 @@ class Dashboard : Fragment() {
                         val addrLen = it.binding.item!!.address.length
                         val first4 = it.binding.item!!.address.substring(0,4)
                         val last4 = it.binding.item!!.address.substring(addrLen-4, addrLen)
-                        it.itemView.tv_wallet_address.text = first4.plus(last4)
+                       // it.itemView.tv_wallet_address.text = first4.plus("...").plus(last4)
                     }
                 }
-                .into(recycler)
+                .into(wallet_recycler)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,8 +78,8 @@ class Dashboard : Fragment() {
         wallet_recycler.layoutManager = LinearLayoutManager(activity)
         wallet_recycler.adapter = lastAdapter
 
-        watch_address_recycler.adapter = watchlastAdapter
-        watch_address_recycler.layoutManager = LinearLayoutManager(activity)
+        //watch_address_recycler.adapter = watchlastAdapter
+        //watch_address_recycler.layoutManager = LinearLayoutManager(activity)
 
         add_account_btn.setOnClickListener {
             showAddressInputView()
@@ -145,8 +145,8 @@ class Dashboard : Fragment() {
             )
             wallets.add(address)
             lastAdapter.notifyDataSetChanged()
-            getAddressValue(address)
-            saveAddressToDb(address)
+            //getAddressValue(address)
+            //saveAddressToDb(address)
         }else{
             showInSnack(this.view!!,"Invalid Address format")
         }
@@ -172,7 +172,7 @@ class Dashboard : Fragment() {
                     }
                 },{
                     activity!!.runOnUiThread {
-                        //showInSnack("Error loading account details!")
+                        showInSnack(this.view!!,"Error loading account details!")
                     }
                 })
     }
@@ -180,14 +180,13 @@ class Dashboard : Fragment() {
 
     fun validateAddress(address: String): Boolean{
 
-        var addressIsValid = false
         return if(!address.isEmpty()){
             try {
                 Base64.decode(address,DEFAULT)
             }catch (e: Exception){
-                addressIsValid = false
+                false
             }
-            addressIsValid
+            true
         }else{
             false
         }
