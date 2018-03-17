@@ -1,5 +1,6 @@
 package donank.amoveowallet.Fragments
 
+import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.os.AsyncTask
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Base64
 import android.util.Base64.DEFAULT
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,10 +27,16 @@ import donank.amoveowallet.Data.Model.Wallet
 import donank.amoveowallet.Data.Model.WalletType
 import donank.amoveowallet.databinding.ItemWalletBinding
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.dashboard_bottom_sheet.*
 import kotlinx.android.synthetic.main.fragment_wallet.view.*
+import java.security.KeyPair
+import java.security.KeyPairGenerator
+import java.security.spec.ECGenParameterSpec
 import javax.inject.Inject
 
 class Dashboard : Fragment() {
+
+    private val TAG = Dashboard::class.simpleName
 
     private val wallets = ObservableArrayList<Wallet>()
     private val lastAdapter: LastAdapter by lazy { initLastAdapter() }
@@ -39,6 +47,12 @@ class Dashboard : Fragment() {
 
     @Inject
     lateinit var restInterface: RESTInterface
+
+//    val keyPairGen = KeyPairGenerator.getInstance("EC", "SunEC")
+
+    //val ecsp = ECGenParameterSpec("secp256k1")
+
+    private val REQUEST_PICK_FILE = 1
 
 
     fun initLastAdapter() : LastAdapter{
@@ -82,58 +96,100 @@ class Dashboard : Fragment() {
         //watch_address_recycler.layoutManager = LinearLayoutManager(activity)
 
         add_account_btn.setOnClickListener {
-            showAddressInputView()
+            showFragment(
+                    instantiate(
+                            activity,
+                            DashboardBottomSheet::class.java.name
+                            ),
+                    true
+            )
         }
-        submit_account_btn.setOnClickListener {
+
+        //watch wallet click events
+
+        watch_submit_btn.setOnClickListener {
             when {
-                edit_account_address.text.isEmpty() -> {
-                    hideAddressInputView()
+                edit_watch_account_address.text.isEmpty() -> {
+                    hideWatchAddressFormView()
                     showInSnack(this.view!!,"Input Address is empty")
                 }
-                edit_account_address.text.length % 4 != 0 -> {
-                    hideAddressInputView()
-                    showInSnack(this.view!!,"Input Address is invalid")
+                else -> addWatchAddressToList()
+            }
+        }
+        watch_cancel_btn.setOnClickListener {
+            hideWatchAddressFormView()
+        }
+
+        //import wallet click events
+
+        select_priv_key_file.setOnClickListener {
+            selectPrivKeyFile()
+        }
+        save_import_account_btn_.setOnClickListener {
+            when{
+                edit_import_account_password.text.isEmpty() -> {
+                    hideImportWalletFormView()
+                    showInSnack(this.view!!,"Input Private Key is empty")
                 }
-                else -> addAddressToList()
+                else -> addWatchAddressToList()
             }
         }
-        account_cancel_btn.setOnClickListener {
-            hideAddressInputView()
+        import_cancel_btn.setOnClickListener {
+            hideImportWalletFormView()
         }
 
-        choose_account_type.setOnCheckedChangeListener{ compoundButton: CompoundButton, b: Boolean ->
-            if(b){
-                edit_account_password.visibility = View.GONE
-            }else{
-                edit_account_password.visibility = View.VISIBLE
-            }
-        }
+        //generate wallet click events
+
+
     }
 
-    fun showAddressInputView(){
-        var count = ""
-        AsyncTask.execute {
-            count = walletDao.getWalletCount().toString()
-        }
-        edit_account_name.setText("Wallet".plus(count + 1))
+    //watch wallet view functions
+
+    fun showWatchAddressFormView(){
+        edit_watch_account_name.setText("Wallet".plus(getWalletCountFromDb() + 1))
         add_account_btn.visibility = View.GONE
-        add_account_layout.visibility = View.VISIBLE
+        watch_address_layout.visibility = View.VISIBLE
 
     }
 
-    fun hideAddressInputView(){
-        add_account_layout.visibility = View.GONE
+    fun hideWatchAddressFormView(){
+        watch_address_layout.visibility = View.GONE
         add_account_btn.visibility = View.VISIBLE
     }
 
-    fun addAddressToList(){
-        hideAddressInputView()
-        val inputName = edit_account_name.text.toString()
-        val walletType = if(choose_account_type.isChecked) WalletType.WATCH
-                            else WalletType.SINGLE
-        val inputAddress = edit_account_address.text.toString().replace("\\s+","")
-        val inputPassword = edit_account_password.text.toString().replace("\\s+","")
+    //import wallet view functions
+
+    fun showImportWalletFormView(){
+        edit_import_account_name.setText("Wallet".plus(getWalletCountFromDb() + 1))
+        add_account_btn.visibility = View.GONE
+        import_account_layout.visibility = View.GONE
+    }
+
+    fun hideImportWalletFormView(){
+        import_account_layout.visibility = View.GONE
+        add_account_btn.visibility = View.VISIBLE
+    }
+
+    //generate wallet view functions
+
+    fun showGenerateWalletFormView(){
+        edit_generate_account_name.setText("Wallet".plus(getWalletCountFromDb() + 1))
+        add_account_btn.visibility = View.GONE
+        generate_account_layout.visibility = View.VISIBLE
+    }
+
+    fun hideGenerateWalletFormView(){
+        generate_account_layout.visibility = View.GONE
+        add_account_btn.visibility = View.VISIBLE
+    }
+
+    fun addWatchAddressToList(){
+        hideWatchAddressFormView()
+        val inputName = edit_watch_account_name.text.toString()
+        val walletType =  WalletType.WATCH
+        val inputAddress = edit_watch_account_address.text.toString().replace("\\s+","")
         val valid = validateAddress(inputAddress)
+        val inputPassword = ""
         if(valid){
 
             val address = Wallet(
@@ -179,7 +235,6 @@ class Dashboard : Fragment() {
 
 
     fun validateAddress(address: String): Boolean{
-
         return if(!address.isEmpty()){
             try {
                 Base64.decode(address,DEFAULT)
@@ -192,9 +247,38 @@ class Dashboard : Fragment() {
         }
     }
 
-    fun saveAddressToDb(wallet : Wallet){
-        AsyncTask.execute {
-            walletDao.save(wallet)
+
+/*
+    fun genKeyPair(salt: String?): KeyPair{
+        keyPairGen.initialize(ecsp)
+        return if(!salt.isNullOrEmpty()) {
+            keyPairGen.genKeyPair()
+        }else{
+            keyPairGen.genKeyPair()
+        }
+    }
+*/
+    fun selectPrivKeyFile(){
+        try {
+            startActivityForResult(
+                    Intent(Intent.ACTION_GET_CONTENT)
+                            .setType("*/*"),
+                    REQUEST_PICK_FILE)
+        }catch (e : Exception){
+            showInSnack(this.view!!, "Error! No File Manager Found")
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(resultCode == 1){
+            when(requestCode){
+                REQUEST_PICK_FILE ->{
+                    if(data != null){
+                        val textData = data.dataString
+                        Log.d(TAG,"Received data $data")
+                    }
+                }
+            }
         }
     }
 
@@ -202,5 +286,20 @@ class Dashboard : Fragment() {
         fragment.showFragment(container = R.id.fragment_container,
                 fragmentManager = activity!!.supportFragmentManager,
                 addToBackStack = addToBackStack)
+    }
+
+    //todo make a separate dbrepository
+    fun saveAddressToDb(wallet : Wallet){
+        AsyncTask.execute {
+            walletDao.save(wallet)
+        }
+    }
+
+    fun getWalletCountFromDb(): String{
+        var count = ""
+        AsyncTask.execute {
+            count = walletDao.getWalletCount().toString()
+        }
+        return count
     }
 }

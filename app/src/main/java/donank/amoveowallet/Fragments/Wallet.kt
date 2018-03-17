@@ -48,11 +48,4 @@ class Wallet : Fragment() {
         super.onActivityCreated(savedInstanceState)
     }
 
-    fun createTransaction(){
-
-    }
-
-    fun signTransaction(){
-        
-    }
 }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/send_bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff"
+    android:orientation="vertical"
+    android:padding="10dp"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="56dp"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Transaction Details"
+        android:textColor="#444"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Amount:"
+        android:textColor="#444"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_send_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="100 VEO" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="From:"
+        android:textColor="#444"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_send_from"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="a161dsa51d6sa51d6a1da1s6dsa6d1sa6d1sa61d" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To:"
+        android:textColor="#444"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_send_to"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="a161dsa51d6ssda51d6a1da1s6dsa6d1sa6d1sa61d" />
+
+
+
+    <Button
+        android:id="@+id/confirm_transaction_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="#000"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="PROCEED TRANSACTION"
+        android:textColor="#fff" />
+
+</LinearLayout>

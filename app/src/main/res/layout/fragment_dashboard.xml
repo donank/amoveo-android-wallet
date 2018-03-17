@@ -8,23 +8,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp">
+        android:orientation="vertical">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:text="Total Balance"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/tv_total_balance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_total_balance"
             android:text="100 Ɐ"
-            android:textSize="40sp"/>
+            android:textSize="40sp" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/wallet_recycler"
@@ -44,15 +44,15 @@
         android:layout_marginBottom="5pt"
         android:layout_marginEnd="5pt"
         android:layout_marginRight="5pt"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:clickable="true"
         android:focusable="true"
-        android:backgroundTint="@color/colorPrimaryDark"
         android:tint="#fff"
         app:srcCompat="@android:drawable/ic_input_add" />
 
 
     <LinearLayout
-        android:id="@+id/add_account_layout"
+        android:id="@+id/import_account_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ffff"
@@ -60,35 +60,36 @@
         android:visibility="gone">
 
         <EditText
-            android:id="@+id/edit_account_name"
+            android:id="@+id/edit_import_account_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:layout_marginTop="100dp"
-            android:hint="Name"/>
+            android:hint="Name" />
 
-        <EditText
-            android:id="@+id/edit_account_address"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="20dp"
-            android:hint="Public Key"/>
+            android:orientation="horizontal">
 
-        <CheckBox
-            android:id="@+id/choose_account_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="Watch Only?"/>
+            <EditText
+                android:id="@+id/edit_import_account_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="20dp"
+                android:hint="Private Key"
+                android:layout_weight="1"/>
 
-        <EditText
-            android:id="@+id/edit_account_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="20dp"
-            android:hint="Private Key"/>
+            <Button
+                android:layout_marginHorizontal="10dp"
+                android:id="@+id/select_priv_key_file"
+                android:text="BROWSE"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.5"
+                />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -99,14 +100,14 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/submit_account_btn"
+                android:id="@+id/save_import_account_btn_"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="SUBMIT" />
+                android:text="IMPORT" />
 
             <Button
-                android:id="@+id/account_cancel_btn"
+                android:id="@+id/import_cancel_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -114,5 +115,115 @@
 
         </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/watch_address_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/edit_watch_account_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="100dp"
+            android:hint="Name" />
+
+        <EditText
+            android:id="@+id/edit_watch_account_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="20dp"
+            android:hint="Public Key" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/watch_submit_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SUBMIT" />
+
+            <Button
+                android:id="@+id/watch_cancel_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="CANCEL" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/generate_account_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/edit_generate_account_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="100dp"
+            android:hint="Name" />
+
+        <EditText
+            android:id="@+id/tv_generate_account_pubkey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Public Key"
+            android:editable="false"
+            android:text="da4sdsa4d4as4da4sda4sdada8s45fds4f5ds6f54sd645fs6d4f6s5d4f6sds="
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/tv_generate_account_privkey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Private Key"
+            android:editable="false"
+            android:text="da4sdsa4d4as4da4sda4sdada8s45fds4f5ds6f54sd645fs6d4f6s5d4f6sds="
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/generate_submit_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SUBMIT" />
+
+            <Button
+                android:id="@+id/generate_cancel_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="CANCEL" />
+        </LinearLayout>
+    </LinearLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

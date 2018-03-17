@@ -1,74 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#eef2f3">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="@drawable/gradient1">
+            android:layout_height="match_parent"
+            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
+            app:layout_collapseMode="parallax"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@drawable/gradient1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_wallet_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="100 V"
+                    android:textColor="#fff"
+                    android:textSize="72sp" />
+
+                <TextView
+                    android:id="@+id/tv_wallet_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="BEnaJzhox9qAgcoXoPYQ...Rz8Gs++QQXIlDug7m6mxE="
+                    android:textColor="#fff" />
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="100 V"
-                android:gravity="center"
-                android:textSize="72sp"
-                android:textColor="#fff"
-                android:id="@+id/tv_wallet_value" />
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/transactions" />
 
-            <TextView
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#fff"
-                android:gravity="center"
-                android:text="BEnaJzhox9qAgcoXoPYQ...Rz8Gs++QQXIlDug7m6mxE="
-                android:id="@+id/tv_wallet_address" />
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="#fff"
+                app:cardElevation="8dp">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/transactions_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.v7.widget.CardView>
 
         </LinearLayout>
-        <TextView
-            android:layout_marginTop="20dp"
-            android:layout_marginHorizontal="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/transactions"/>
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:backgroundTint="#fff"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="20dp"
-            app:cardElevation="8dp">
-
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/transactions_recycler"/>
-        </android.support.v7.widget.CardView>
-
-    </LinearLayout>
+    </android.support.design.widget.AppBarLayout>
 
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/add_transaction_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_marginRight="5pt"
-            android:layout_marginBottom="5pt"
-            android:layout_marginEnd="5pt"
-            app:srcCompat="@android:drawable/ic_input_add"
-            android:layout_gravity="bottom|end"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_transaction_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="5pt"
+        android:layout_marginEnd="5pt"
+        android:layout_marginRight="5pt"
+        android:clickable="true"
+        android:focusable="true"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </android.support.design.widget.CoordinatorLayout>
