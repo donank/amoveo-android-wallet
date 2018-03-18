@@ -6,17 +6,14 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Base64
-import android.util.Base64.DEFAULT
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
 import com.github.nitrico.lastadapter.LastAdapter
 import donank.amoveowallet.Api.RESTInterface
 import donank.amoveowallet.BR
+import donank.amoveowallet.Repositories.CryptoRepository
 import donank.amoveowallet.Common.showFragment
 import donank.amoveowallet.Common.showInSnack
 import donank.amoveowallet.Dagger.MainApplication
@@ -25,13 +22,10 @@ import donank.amoveowallet.R
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import donank.amoveowallet.Data.Model.Wallet
 import donank.amoveowallet.Data.Model.WalletType
+import donank.amoveowallet.Repositories.DBRepository
+import donank.amoveowallet.Repositories.NetworkRepository
 import donank.amoveowallet.databinding.ItemWalletBinding
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.dashboard_bottom_sheet.*
-import kotlinx.android.synthetic.main.fragment_wallet.view.*
-import java.security.KeyPair
-import java.security.KeyPairGenerator
-import java.security.spec.ECGenParameterSpec
 import javax.inject.Inject
 
 class Dashboard : Fragment() {
@@ -42,15 +36,13 @@ class Dashboard : Fragment() {
     private val lastAdapter: LastAdapter by lazy { initLastAdapter() }
     //private val watchlastAdapter: LastAdapter by lazy { initLastAdapter(watch_address_recycler) }
 
-    @Inject
-    lateinit var walletDao: WalletDao
+    @Inject lateinit var restInterface: RESTInterface
 
-    @Inject
-    lateinit var restInterface: RESTInterface
+    @Inject lateinit var cryptoRepository: CryptoRepository
 
-//    val keyPairGen = KeyPairGenerator.getInstance("EC", "SunEC")
+    @Inject lateinit var dbRepository: DBRepository
 
-    //val ecsp = ECGenParameterSpec("secp256k1")
+    @Inject lateinit var networkRepository: NetworkRepository
 
     private val REQUEST_PICK_FILE = 1
 
@@ -146,7 +138,7 @@ class Dashboard : Fragment() {
     //watch wallet view functions
 
     fun showWatchAddressFormView(){
-        edit_watch_account_name.setText("Wallet".plus(getWalletCountFromDb() + 1))
+        edit_watch_account_name.setText("Wallet".plus(dbRepository.getWalletCountFromDb() + 1))
         add_account_btn.visibility = View.GONE
         watch_address_layout.visibility = View.VISIBLE
 
@@ -160,7 +152,7 @@ class Dashboard : Fragment() {
     //import wallet view functions
 
     fun showImportWalletFormView(){
-        edit_import_account_name.setText("Wallet".plus(getWalletCountFromDb() + 1))
+        edit_import_account_name.setText("Wallet".plus(dbRepository.getWalletCountFromDb() + 1))
         add_account_btn.visibility = View.GONE
         import_account_layout.visibility = View.GONE
     }
@@ -173,7 +165,7 @@ class Dashboard : Fragment() {
     //generate wallet view functions
 
     fun showGenerateWalletFormView(){
-        edit_generate_account_name.setText("Wallet".plus(getWalletCountFromDb() + 1))
+        edit_generate_account_name.setText("Wallet".plus(dbRepository.getWalletCountFromDb() + 1))
         add_account_btn.visibility = View.GONE
         generate_account_layout.visibility = View.VISIBLE
     }
@@ -188,7 +180,7 @@ class Dashboard : Fragment() {
         val inputName = edit_watch_account_name.text.toString()
         val walletType =  WalletType.WATCH
         val inputAddress = edit_watch_account_address.text.toString().replace("\\s+","")
-        val valid = validateAddress(inputAddress)
+        val valid = cryptoRepository.validateAddress(inputAddress)
         val inputPassword = ""
         if(valid){
 
@@ -216,7 +208,7 @@ class Dashboard : Fragment() {
                     val res = it.replace("\\s+","").split(",")
                     if(res[0] == """["ok""""){
                         wallet.value = res[2].toLong()
-                        walletDao.update(wallet)
+                        dbRepository.update(wallet)
                         activity!!.runOnUiThread {
                             wallets.filter { it.address == wallet.address }.forEach { it.value = wallet.value }
                             lastAdapter.notifyDataSetChanged()
@@ -234,30 +226,6 @@ class Dashboard : Fragment() {
     }
 
 
-    fun validateAddress(address: String): Boolean{
-        return if(!address.isEmpty()){
-            try {
-                Base64.decode(address,DEFAULT)
-            }catch (e: Exception){
-                false
-            }
-            true
-        }else{
-            false
-        }
-    }
-
-
-/*
-    fun genKeyPair(salt: String?): KeyPair{
-        keyPairGen.initialize(ecsp)
-        return if(!salt.isNullOrEmpty()) {
-            keyPairGen.genKeyPair()
-        }else{
-            keyPairGen.genKeyPair()
-        }
-    }
-*/
     fun selectPrivKeyFile(){
         try {
             startActivityForResult(
@@ -289,17 +257,4 @@ class Dashboard : Fragment() {
     }
 
     //todo make a separate dbrepository
-    fun saveAddressToDb(wallet : Wallet){
-        AsyncTask.execute {
-            walletDao.save(wallet)
-        }
-    }
-
-    fun getWalletCountFromDb(): String{
-        var count = ""
-        AsyncTask.execute {
-            count = walletDao.getWalletCount().toString()
-        }
-        return count
-    }
 }

@@ -7,7 +7,10 @@ import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import donank.amoveowallet.Api.RESTInterface
+import donank.amoveowallet.Repositories.CryptoRepository
 import donank.amoveowallet.Data.AppDatabase
+import donank.amoveowallet.Repositories.DBRepository
+import donank.amoveowallet.Repositories.NetworkRepository
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
@@ -50,4 +53,16 @@ class AppModule(private val app: Application) {
     @Provides
     @Singleton
     fun ProvideRESTInterface(httpClient: OkHttpClient, moshi: Moshi) = RESTInterface.create(httpClient, moshi)
+
+    @Provides
+    @Singleton
+    fun provideCryptoRepository() = CryptoRepository()
+
+    @Provides
+    @Singleton
+    fun provideDBRepository() = DBRepository()
+
+    @Provides
+    @Singleton
+    fun provideNetworkRepositroy() = NetworkRepository()
 }
