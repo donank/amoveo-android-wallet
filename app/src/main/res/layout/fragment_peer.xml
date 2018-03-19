@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="120dp"
         android:layout_marginHorizontal="20dp">
 
         <TextView
@@ -41,10 +41,28 @@
             android:id="@+id/tv_height"/>
     </LinearLayout>
 
-    <Button
-        android:layout_gravity="bottom|center"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/change_peer"/>
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="24dp">
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/test_peer_btn"
+            android:text="TEST"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/change_peer_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/change_peer"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
 
 </LinearLayout>

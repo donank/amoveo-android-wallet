@@ -2,6 +2,7 @@ package donank.amoveowallet.Fragments
 
 import android.databinding.ObservableArrayList
 import android.graphics.drawable.Drawable
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import com.github.nitrico.lastadapter.LastAdapter
 import donank.amoveowallet.Api.RESTInterface
 import donank.amoveowallet.BR
 import donank.amoveowallet.Dagger.MainApplication
+import donank.amoveowallet.Data.AppPref
 import donank.amoveowallet.Data.Model.Transaction
 import donank.amoveowallet.Data.WalletDao
 import donank.amoveowallet.R
@@ -30,6 +32,7 @@ class Wallet : Fragment() {
     @Inject
     lateinit var restInterface: RESTInterface
 
+
     fun initLastAdapter() : LastAdapter{
         return LastAdapter(transactions, BR.item)
                 .map<Transaction, ItemTransactionBinding>(R.layout.item_transaction)
@@ -46,6 +49,20 @@ class Wallet : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        setWallet()
     }
 
+    fun setWallet(){
+        var walletValue = 0L
+        var walletAddress = ""
+        AsyncTask.execute {
+            val wallet = walletDao.getWalletByid(AppPref.currentWalletId)
+            walletValue = wallet.value
+            walletAddress = wallet.address
+            transactions.addAll(walletDao.getTransactions(walletAddress))
+        }
+        tv_wallet_value.text = walletValue.toString()
+        tv_wallet_address.text = walletAddress
+        lastAdapter.notifyDataSetChanged()
+    }
 }

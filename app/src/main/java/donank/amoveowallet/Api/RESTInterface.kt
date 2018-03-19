@@ -20,7 +20,7 @@ interface RESTInterface {
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
                     .client(client)
-                    .baseUrl(AppPref.baseUrl)
+                    .baseUrl(AppPref.peerUrl)
                     .build()
                     .create(RESTInterface::class.java)
 

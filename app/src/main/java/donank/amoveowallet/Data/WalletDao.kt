@@ -19,4 +19,7 @@ interface WalletDao {
     @Query("select * from `transaction` where from_address == :pubkey or to_address == :pubkey")
     fun getTransactions(pubkey: String):List<Transaction>
 
+    @Query("select * from wallet where id= :id")
+    fun getWalletByid(id : Long) : Wallet
+
 }

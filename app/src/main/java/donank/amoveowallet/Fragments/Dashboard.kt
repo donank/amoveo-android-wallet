@@ -17,6 +17,7 @@ import donank.amoveowallet.Repositories.CryptoRepository
 import donank.amoveowallet.Common.showFragment
 import donank.amoveowallet.Common.showInSnack
 import donank.amoveowallet.Dagger.MainApplication
+import donank.amoveowallet.Data.AppPref
 import donank.amoveowallet.Data.WalletDao
 import donank.amoveowallet.R
 import kotlinx.android.synthetic.main.fragment_dashboard.*
@@ -51,7 +52,8 @@ class Dashboard : Fragment() {
         return LastAdapter(wallets, BR.item)
                 .map<Wallet, ItemWalletBinding>(R.layout.item_wallet){
                     onBind {
-                        it.itemView.setOnClickListener {
+                        it.itemView.setOnClickListener { _ ->
+                            AppPref.currentWalletId = it.binding.item!!.id
                             showFragment(
                                     Fragment.instantiate(
                                             activity,
@@ -255,6 +257,4 @@ class Dashboard : Fragment() {
                 fragmentManager = activity!!.supportFragmentManager,
                 addToBackStack = addToBackStack)
     }
-
-    //todo make a separate dbrepository
 }

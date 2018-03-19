@@ -1,17 +1,22 @@
 package donank.amoveowallet.Fragments
 
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import donank.amoveowallet.Common.showInSnack
 import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.Data.AppPref
+import donank.amoveowallet.Data.WalletDao
 import donank.amoveowallet.R
-import kotlinx.android.synthetic.main.fragment_peer.*
+import kotlinx.android.synthetic.main.fragment_qr.*
+import net.glxn.qrgen.android.QRCode
+import javax.inject.Inject
 
-class Peer : Fragment() {
+class QRAddress : Fragment() {
+
+    @Inject lateinit var walletDao : WalletDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,21 +25,17 @@ class Peer : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_peer, container, false)
+            inflater.inflate(R.layout.fragment_qr, container, false)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        edit_peer.setText(AppPref.peerUrl)
-        test_peer_btn.setOnClickListener {
-            //todo check peer validity
-        }
+    }
 
-        change_peer_btn.setOnClickListener {
-            if(!edit_peer.text.isEmpty() && AppPref.validPeer){
-                AppPref.peerUrl = edit_peer.text.toString()
-            }else{
-                showInSnack(this.view!!,"Invalid Peer")
-            }
+    fun generateQr(){
+        var walletAddress = ""
+        AsyncTask.execute {
+            walletAddress = walletDao.getWalletByid(AppPref.currentWalletId).address
         }
+        //todo qr_image.background = QRCode.from(walletAddress).bitmap()
     }
 }
