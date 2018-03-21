@@ -9,10 +9,7 @@ import donank.amoveowallet.Data.Model.Wallet
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class NetworkRepository {
-
-    @Inject
-    lateinit var restInterface: RESTInterface
+class NetworkRepository constructor(val restInterface: RESTInterface) {
 
     fun getAddressValue(wallet : Wallet) {
         val command = """["account","${wallet.address}"]"""

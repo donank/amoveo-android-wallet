@@ -53,16 +53,4 @@ class AppModule(private val app: Application) {
     @Provides
     @Singleton
     fun ProvideRESTInterface(httpClient: OkHttpClient, moshi: Moshi) = RESTInterface.create(httpClient, moshi)
-
-    @Provides
-    @Singleton
-    fun provideCryptoRepository() = CryptoRepository()
-
-    @Provides
-    @Singleton
-    fun provideDBRepository() = DBRepository()
-
-    @Provides
-    @Singleton
-    fun provideNetworkRepositroy() = NetworkRepository()
 }

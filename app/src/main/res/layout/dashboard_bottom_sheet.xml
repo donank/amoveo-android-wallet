@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingBottom="8dp"
-    android:paddingTop="8dp">
-
-    <!-- NOTE: This list should be displayed in a list
-    instead of nested layouts -->
+    android:paddingTop="8dp"
+    android:layout_gravity="bottom">
 
     <LinearLayout
         android:id="@+id/generate_account_btn"

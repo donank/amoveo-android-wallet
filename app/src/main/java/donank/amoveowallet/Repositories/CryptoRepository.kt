@@ -1,13 +1,21 @@
 package donank.amoveowallet.Repositories
 
 import android.util.Base64
+import org.spongycastle.jce.provider.BouncyCastleProvider
 import java.security.*
 import java.security.spec.ECGenParameterSpec
+import java.security.Security.insertProviderAt
+
+
 
 class CryptoRepository {
 
 
-    val keyPairGen = KeyPairGenerator.getInstance("ECDSA", "BC")
+    init {
+        Security.insertProviderAt(BouncyCastleProvider(),1)
+    }
+
+    val keyPairGen = KeyPairGenerator.getInstance("ECDSA", "SC")
 
     val ecsp = ECGenParameterSpec("secp256k1")
 

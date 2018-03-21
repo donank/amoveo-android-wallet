@@ -4,6 +4,7 @@ import android.app.Application
 import dagger.Component
 import donank.amoveowallet.Activity.MainActivity
 import donank.amoveowallet.Fragments.*
+import donank.amoveowallet.Repositories.DBRepository
 import javax.inject.Singleton
 
 @Singleton
@@ -19,4 +20,8 @@ interface AppComponent {
     fun inject(contacts: Contacts)
     fun inject(qrAddress: QRAddress)
     fun inject(participate: Participate)
+    fun inject(generateWallet: GenerateWallet)
+    fun inject(importWallet: ImportWallet)
+    fun inject(watchWallet: WatchWallet)
+    fun inject(dbRepository: DBRepository)
 }
