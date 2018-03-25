@@ -22,4 +22,7 @@ interface WalletDao {
     @Query("select * from wallet where id= :id")
     fun getWalletByid(id : Long) : Wallet
 
+    @Query("select * from wallet")
+    fun getWallets(): List<Wallet>
+
 }

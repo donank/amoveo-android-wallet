@@ -1,15 +1,11 @@
 package donank.amoveowallet.Fragments
 
-import android.content.Intent
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.ObservableArrayList
-import android.os.AsyncTask
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.github.nitrico.lastadapter.LastAdapter
@@ -25,13 +21,9 @@ import donank.amoveowallet.R
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import donank.amoveowallet.Data.Model.Wallet
 import donank.amoveowallet.Data.Model.WalletType
-import donank.amoveowallet.Repositories.DBRepository
-import donank.amoveowallet.Repositories.NetworkRepository
+import donank.amoveowallet.Data.Model.ViewModels.WalletListViewModel
 import donank.amoveowallet.databinding.ItemWalletBinding
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.dashboard_bottom_sheet.*
-import kotlinx.android.synthetic.main.fragment_generate.*
-import kotlinx.android.synthetic.main.fragment_import.*
 import kotlinx.android.synthetic.main.fragment_watch.*
 import javax.inject.Inject
 
@@ -53,6 +45,8 @@ class Dashboard : Fragment() {
     //val networkRepository = NetworkRepository(restInterface)
 
     val cryptoRepository = CryptoRepository()
+
+    private val walletViewModel = ViewModelProviders.of(this@Dashboard).get(WalletListViewModel::class.java)
 
     fun initLastAdapter(): LastAdapter {
         return LastAdapter(wallets, BR.item)

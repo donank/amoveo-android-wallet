@@ -94,10 +94,20 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
+    //SpongyCastle
     implementation 'com.madgag.spongycastle:core:1.58.0.0'
     implementation 'com.madgag.spongycastle:prov:1.58.0.0'
     implementation 'com.madgag.spongycastle:pkix:1.54.0.0'
     implementation 'com.madgag.spongycastle:pg:1.54.0.0'
+
+    // ViewModel and LiveData
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    // alternatively, just ViewModel
+    implementation "android.arch.lifecycle:viewmodel:1.1.1"
+    // alternatively, just LiveData
+    implementation "android.arch.lifecycle:livedata:1.1.1"
+
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
 
 }
 repositories {
