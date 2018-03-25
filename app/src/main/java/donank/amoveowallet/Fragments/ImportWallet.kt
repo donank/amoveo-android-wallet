@@ -1,12 +1,14 @@
 package donank.amoveowallet.Fragments
 
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import donank.amoveowallet.Common.showFragment
 import donank.amoveowallet.Common.showInSnack
 import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.Data.WalletDao
@@ -20,7 +22,7 @@ class ImportWallet : Fragment() {
     @Inject
     lateinit var walletDao: WalletDao
 
-    val dbRepository = DBRepository(walletDao)
+    //val dbRepository = DBRepository(walletDao)
 
     private val REQUEST_PICK_FILE = 1
 
@@ -34,7 +36,7 @@ class ImportWallet : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        edit_import_account_name.setText("Wallet".plus(dbRepository.getWalletCountFromDb() + 1))
+        edit_import_account_name.setText("Wallet".plus(getWalletCountFromDb() + 1))
 
         select_priv_key_file.setOnClickListener {
             selectPrivKeyFile()
@@ -47,7 +49,22 @@ class ImportWallet : Fragment() {
             }
         }
         import_cancel_btn.setOnClickListener {
+            showFragment(
+                    Fragment.instantiate(
+                            activity,
+                            Dashboard::class.java.name
+                    ),
+                    false
+            )
         }
+    }
+
+    fun getWalletCountFromDb(): String{
+        var count = ""
+        AsyncTask.execute {
+            count = walletDao.getWalletCount().toString()
+        }
+        return count
     }
 
     fun selectPrivKeyFile() {
@@ -72,5 +89,11 @@ class ImportWallet : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showFragment(fragment: Fragment, addToBackStack: Boolean = true) {
+        fragment.showFragment(container = R.id.fragment_container,
+                fragmentManager = activity!!.supportFragmentManager,
+                addToBackStack = addToBackStack)
     }
 }

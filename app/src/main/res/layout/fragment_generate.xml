@@ -13,27 +13,25 @@
         android:layout_marginTop="100dp"
         android:hint="Name" />
 
-    <EditText
+    <TextView
         android:id="@+id/tv_generate_account_pubkey"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Public Key"
         android:editable="false"
-        android:text="da4sdsa4d4as4da4sda4sdada8s45fds4f5ds6f54sd645fs6d4f6s5d4f6sds="
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="20dp"
         android:textSize="20sp"/>
 
-    <EditText
+    <TextView
         android:id="@+id/tv_generate_account_privkey"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Private Key"
         android:editable="false"
-        android:text="da4sdsa4d4as4da4sda4sdada8s45fds4f5ds6f54sd645fs6d4f6s5d4f6sds="
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="20dp"
-        android:textSize="20sp"/>
+        android:textSize="20sp" />
 
 
     <LinearLayout
@@ -49,7 +47,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="SUBMIT" />
+            android:text="SUBMIT"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/generate_new_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="GENERATE"/>
 
         <Button
             android:id="@+id/generate_cancel_btn"

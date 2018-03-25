@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_generate"
+        android:enabled="true"
+        android:icon="@drawable/ic_group_work_black_24dp"
+        android:title="Generate"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_import"
+        android:enabled="true"
+        android:icon="@drawable/ic_import_export_black_24dp"
+        android:title="Import"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_watch"
+        android:enabled="true"
+        android:icon="@drawable/ic_remove_red_eye_black_24dp"
+        android:title="Watch"
+        app:showAsAction="ifRoom" />
+</menu>

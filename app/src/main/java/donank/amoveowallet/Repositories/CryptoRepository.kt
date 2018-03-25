@@ -1,11 +1,21 @@
 package donank.amoveowallet.Repositories
 
 import android.util.Base64
+import org.spongycastle.asn1.sec.SECNamedCurves
+import org.spongycastle.crypto.AsymmetricCipherKeyPair
+import org.spongycastle.crypto.generators.ECKeyPairGenerator
+import org.spongycastle.crypto.params.ECDomainParameters
+import org.spongycastle.crypto.params.ECKeyGenerationParameters
+import org.spongycastle.crypto.params.ECPrivateKeyParameters
 import org.spongycastle.jce.provider.BouncyCastleProvider
+import java.math.BigInteger
 import java.security.*
 import java.security.spec.ECGenParameterSpec
 import java.security.Security.insertProviderAt
-
+import java.util.*
+import org.spongycastle.crypto.params.ECPublicKeyParameters
+import org.spongycastle.asn1.x9.X9ECParameters
+import kotlin.experimental.and
 
 
 class CryptoRepository {
@@ -15,17 +25,52 @@ class CryptoRepository {
         Security.insertProviderAt(BouncyCastleProvider(),1)
     }
 
-    val keyPairGen = KeyPairGenerator.getInstance("ECDSA", "SC")
+    val curve = SECNamedCurves.getByName("secp256k1")
+    val domain = ECDomainParameters(curve.curve, curve.g,curve.n,curve.h)
+    val generator = ECKeyPairGenerator()
+    val keygenParams = ECKeyGenerationParameters(domain, SecureRandom())
 
-    val ecsp = ECGenParameterSpec("secp256k1")
+    val hexArray = "0123456789ABCDEF".toCharArray()
+
 
 
     fun sha256(){
 
     }
 
-    fun generatePubKey(privateKey : ByteArray): ByteArray? {
-        return privateKey
+    fun generatePubKey(privateKey : String): String {
+        val privKey = BigInteger(privateKey, 16)
+        val ecp = SECNamedCurves.getByName("secp256k1")
+        val curvePt = ecp.g.multiply(privKey)
+        val x = curvePt.x.toBigInteger()
+        val y = curvePt.y.toBigInteger()
+        val xBytes = removeSignByte(x.toByteArray())
+        val yBytes = removeSignByte(y.toByteArray())
+        val pubKeyBytes = ByteArray(65)
+        pubKeyBytes[0] = "04".toByte()
+        System.arraycopy(xBytes, 0, pubKeyBytes, 1, xBytes.size)
+        System.arraycopy(yBytes, 0, pubKeyBytes, 33, yBytes.size)
+        return this.bytesToHex(pubKeyBytes)
+    }
+
+    private fun removeSignByte(arr: ByteArray): ByteArray {
+        if (arr.size == 33) {
+            val newArr = ByteArray(32)
+            System.arraycopy(arr, 1, newArr, 0, newArr.size)
+            return newArr
+        }
+        return arr
+    }
+
+    fun bytesToHex(bytes: ByteArray): String {
+        val hexChars = CharArray(bytes.size * 2)
+        var v: Int
+        for (j in bytes.indices) {
+            v = bytes[j].and(0xFF.toByte()).toInt()
+            hexChars[j * 2] = hexArray[v.ushr(4)]
+            hexChars[j * 2 + 1] = hexArray[v and 0x0F]
+        }
+        return String(hexChars)
     }
 
     //https://stackoverflow.com/questions/8571501/how-to-check-whether-the-string-is-base64-encoded-or-not
@@ -52,13 +97,12 @@ class CryptoRepository {
     //https://stackoverflow.com/questions/31435160/how-to-construct-privatekey-if-you-know-the-curve-name-raw-private-key-point
 
 
-    fun genKeyPair(salt: String?): KeyPair {
-        keyPairGen.initialize(ecsp, SecureRandom())
-        return if(!salt.isNullOrEmpty()) {
-            keyPairGen.genKeyPair()
-        }else{
-            keyPairGen.genKeyPair()
-        }
+    fun genKeyPair(salt: String?): Pair<ECPrivateKeyParameters, ECPublicKeyParameters> {
+        generator.init(keygenParams)
+        val keyPair = generator.generateKeyPair()
+        val privParams = keyPair.private as ECPrivateKeyParameters
+        val pubParams = keyPair.public as ECPublicKeyParameters
+        return Pair(privParams,pubParams)
     }
 
     //Brain Wallet ->
@@ -76,7 +120,7 @@ class CryptoRepository {
 
     }
 
-    fun signTransaction(pKey : String, data : String){
+    fun signData(pKey : String, data : String){
 
     }
 

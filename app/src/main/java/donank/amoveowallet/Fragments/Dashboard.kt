@@ -4,10 +4,12 @@ import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.os.AsyncTask
 import android.os.Bundle
+import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.github.nitrico.lastadapter.LastAdapter
@@ -93,9 +95,37 @@ class Dashboard : Fragment() {
         //watch_address_recycler.adapter = watchlastAdapter
         //watch_address_recycler.layoutManager = LinearLayoutManager(activity)
 
-        add_account_btn.setOnClickListener {
+        /*add_account_btn.setOnClickListener {
             DashboardBottomSheet().show(fragmentManager, "Menu")
-        }
+        } */
+
+        bottom_navigation.setOnNavigationItemSelectedListener(
+                { item ->
+                    when (item.itemId) {
+                        R.id.action_generate->showFragment(
+                                Fragment.instantiate(
+                                        activity,
+                                        GenerateWallet::class.java.name
+                                ),
+                                addToBackStack = true
+                        )
+                        R.id.action_import->showFragment(
+                                Fragment.instantiate(
+                                        activity,
+                                        ImportWallet::class.java.name
+                                ),
+                                addToBackStack = true
+                        )
+                        R.id.action_watch->showFragment(
+                                Fragment.instantiate(
+                                        activity,
+                                        WatchWallet::class.java.name
+                                ),
+                                addToBackStack = true
+                        )
+                    }
+                    true
+                })
 
     }
 
@@ -148,7 +178,6 @@ class Dashboard : Fragment() {
                     }
                 })
     }
-
 
 
     private fun showFragment(fragment: Fragment, addToBackStack: Boolean = true) {

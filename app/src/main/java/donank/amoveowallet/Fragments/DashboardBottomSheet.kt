@@ -1,6 +1,8 @@
 package donank.amoveowallet.Fragments
 
+import android.app.Dialog
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.support.design.widget.BottomSheetDialogFragment
@@ -21,7 +23,10 @@ class DashboardBottomSheet : BottomSheetDialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        /*
+        val bottomSheetBehavior = BottomSheetBehavior.from(dashboard_bottom_sheet)
         generate_account_btn.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             showFragment(
                     Fragment.instantiate(
                             activity,
@@ -47,8 +52,9 @@ class DashboardBottomSheet : BottomSheetDialogFragment() {
                     ),
                     addToBackStack = false
             )
-        }
+        }*/
     }
+
 
     private fun showFragment(fragment: Fragment, addToBackStack: Boolean = true) {
         fragment.showFragment(container = R.id.fragment_container,
