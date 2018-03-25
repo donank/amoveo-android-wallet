@@ -1,16 +1,13 @@
 package donank.amoveowallet.Fragments
 
-import android.app.Dialog
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v4.app.Fragment
 import android.view.View
-import donank.amoveowallet.Common.showFragment
+import donank.amoveowallet.Utility.showFragment
 import donank.amoveowallet.R
-import kotlinx.android.synthetic.main.dashboard_bottom_sheet.*
 
 
 class DashboardBottomSheet : BottomSheetDialogFragment() {

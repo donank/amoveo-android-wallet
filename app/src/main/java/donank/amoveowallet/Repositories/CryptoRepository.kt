@@ -2,7 +2,6 @@ package donank.amoveowallet.Repositories
 
 import android.util.Base64
 import org.spongycastle.asn1.sec.SECNamedCurves
-import org.spongycastle.crypto.AsymmetricCipherKeyPair
 import org.spongycastle.crypto.generators.ECKeyPairGenerator
 import org.spongycastle.crypto.params.ECDomainParameters
 import org.spongycastle.crypto.params.ECKeyGenerationParameters
@@ -112,7 +111,7 @@ class CryptoRepository {
     //https://bitcoin.stackexchange.com/questions/3374/how-to-redeem-a-basic-tx
     //https://ebrary.net/7941/education/signing_bitcoin_transaction_using_ecdsa
 
-    fun generateTransaction(){
+    fun generateTransaction(toAddress: String, amount: String) {
 
     }
 

@@ -1,25 +1,17 @@
 package donank.amoveowallet.Activity
 
-import android.app.Application
-import android.content.Context
-import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.annotation.RequiresApi
-import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
-import donank.amoveowallet.Common.showFragment
+import donank.amoveowallet.Utility.showFragment
 import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.Fragments.Dashboard
 import donank.amoveowallet.R
 import kotlinx.android.synthetic.main.drawer_layout.*
 import android.support.v4.view.GravityCompat
 import android.view.MenuItem
-import android.view.View
 import donank.amoveowallet.Fragments.Peer
 import donank.amoveowallet.Fragments.Wallet
-import kotlin.math.absoluteValue
 
 
 class MainActivity : AppCompatActivity(){

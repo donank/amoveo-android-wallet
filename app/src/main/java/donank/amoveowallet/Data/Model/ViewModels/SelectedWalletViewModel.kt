@@ -7,7 +7,6 @@ import donank.amoveowallet.Data.Model.Wallet
 import donank.amoveowallet.Data.WalletDao
 
 class SelectedWalletViewModel : ViewModel() {
-    lateinit var walletDao: WalletDao
     private var selectedWallet = MutableLiveData<Wallet>()
     fun select(wallet: Wallet) {
         selectedWallet.value = wallet

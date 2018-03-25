@@ -11,9 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.github.nitrico.lastadapter.LastAdapter
 import donank.amoveowallet.BR
-import donank.amoveowallet.Common.showFragment
-import donank.amoveowallet.Common.showInSnack
-import donank.amoveowallet.Dagger.AppModule_ProvideApplicationFactory
+import donank.amoveowallet.Utility.showFragment
+import donank.amoveowallet.Utility.showInSnack
 import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.Data.Model.ViewModels.SelectedWalletViewModel
 import donank.amoveowallet.R

@@ -8,12 +8,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import donank.amoveowallet.Common.showFragment
-import donank.amoveowallet.Common.showInSnack
+import donank.amoveowallet.Utility.showFragment
+import donank.amoveowallet.Utility.showInSnack
 import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.Data.WalletDao
 import donank.amoveowallet.R
-import donank.amoveowallet.Repositories.DBRepository
 import kotlinx.android.synthetic.main.fragment_import.*
 import javax.inject.Inject
 

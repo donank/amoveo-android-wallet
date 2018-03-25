@@ -18,10 +18,12 @@ interface AppComponent {
     fun inject(wallet: Wallet)
     fun inject(peer: Peer)
     fun inject(contacts: Contacts)
-    fun inject(qrAddress: QRAddress)
     fun inject(participate: Participate)
     fun inject(generateWallet: GenerateWallet)
     fun inject(importWallet: ImportWallet)
     fun inject(watchWallet: WatchWallet)
     fun inject(dbRepository: DBRepository)
+    fun inject(receive: Receive) {
+
+    }
 }

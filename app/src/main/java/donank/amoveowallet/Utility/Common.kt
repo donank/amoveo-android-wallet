@@ -1,4 +1,4 @@
-package donank.amoveowallet.Common
+package donank.amoveowallet.Utility
 
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager
 import android.view.View
 import android.graphics.Color
 import android.widget.TextView
-import donank.amoveowallet.R
 
 
 fun Fragment.showFragment(container: Int, fragmentManager: FragmentManager,

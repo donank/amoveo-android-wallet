@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import donank.amoveowallet.Common.showInSnack
+import donank.amoveowallet.Utility.showInSnack
 import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.Data.AppPref
 import donank.amoveowallet.R

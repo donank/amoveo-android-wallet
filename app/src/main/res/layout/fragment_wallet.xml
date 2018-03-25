@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#eef2f3">
+    android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -28,16 +28,28 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="100 V"
-                    android:textColor="#fff"
                     android:textSize="72sp" />
 
-                <TextView
-                    android:id="@+id/tv_wallet_address"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="BEnaJzhox9qAgcoXoPYQ...Rz8Gs++QQXIlDug7m6mxE="
-                    android:textColor="#fff" />
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_wallet_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="BEnaJzhoxcoXoPYQ...Rz8Gs++QQXI7m6mxE=" />
+
+                    <ImageView
+                        android:id="@+id/copy_Address"
+                        android:paddingHorizontal="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_content_copy_black_24dp"/>
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -45,7 +57,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="20dp"
-                android:backgroundTint="#fff"
                 app:cardElevation="8dp">
 
                 <android.support.v7.widget.RecyclerView
@@ -58,16 +69,22 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add_transaction_btn"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="5pt"
-        android:layout_marginEnd="5pt"
-        android:layout_marginRight="5pt"
-        android:clickable="true"
-        android:focusable="true"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:layout_height="match_parent">
+
+        <!-- Content Container -->
+
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottom_navigation_wallet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            app:itemBackground="@color/colorPrimary"
+            app:itemIconTint="#ffffff"
+            app:itemTextColor="#ffffff"
+            app:menu="@menu/wallet_bottom_navigation_menu"/>
+
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

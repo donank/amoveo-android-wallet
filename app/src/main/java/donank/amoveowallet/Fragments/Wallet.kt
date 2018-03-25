@@ -1,36 +1,28 @@
 package donank.amoveowallet.Fragments
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.ObservableArrayList
-import android.graphics.drawable.Drawable
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.nitrico.lastadapter.LastAdapter
-import donank.amoveowallet.Api.RESTInterface
 import donank.amoveowallet.BR
+import donank.amoveowallet.Utility.showFragment
 import donank.amoveowallet.Dagger.MainApplication
-import donank.amoveowallet.Data.AppPref
 import donank.amoveowallet.Data.Model.Transaction
-import donank.amoveowallet.Data.WalletDao
+import donank.amoveowallet.Data.Model.ViewModels.SelectedWalletViewModel
+import donank.amoveowallet.Data.Model.Wallet
 import donank.amoveowallet.R
 import donank.amoveowallet.databinding.ItemTransactionBinding
-import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_wallet.*
-import javax.inject.Inject
 
 class Wallet : Fragment() {
 
     private val transactions = ObservableArrayList<Transaction>()
     private val lastAdapter: LastAdapter by lazy { initLastAdapter() }
-
-    @Inject
-    lateinit var walletDao: WalletDao
-
-    @Inject
-    lateinit var restInterface: RESTInterface
 
 
     fun initLastAdapter() : LastAdapter{
@@ -41,6 +33,11 @@ class Wallet : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity!!.application as MainApplication).component.inject(this)
+
+        val walletModel = ViewModelProviders.of(activity!!).get(SelectedWalletViewModel::class.java)
+        walletModel.getSelected().observe(this,Observer<Wallet>{
+
+        })
     }
 
 
@@ -49,20 +46,33 @@ class Wallet : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setWallet()
+
+        bottom_navigation_wallet.setOnNavigationItemSelectedListener(
+                { item ->
+                    when (item.itemId) {
+                        R.id.action_send->showFragment(
+                                Fragment.instantiate(
+                                        activity,
+                                        Send::class.java.name
+                                ),
+                                addToBackStack = true
+                        )
+                        R.id.action_receive->showFragment(
+                                Fragment.instantiate(
+                                        activity,
+                                        Receive::class.java.name
+                                ),
+                                addToBackStack = true
+                        )
+                    }
+                    true
+                })
     }
 
-    fun setWallet(){
-        var walletValue = 0L
-        var walletAddress = ""
-        AsyncTask.execute {
-            val wallet = walletDao.getWalletByid(AppPref.currentWalletId)
-            walletValue = wallet.value
-            walletAddress = wallet.address
-            transactions.addAll(walletDao.getTransactions(walletAddress))
-        }
-        tv_wallet_value.text = walletValue.toString()
-        tv_wallet_address.text = walletAddress
-        lastAdapter.notifyDataSetChanged()
+    private fun showFragment(fragment: Fragment, addToBackStack: Boolean = true) {
+        fragment.showFragment(container = R.id.fragment_container,
+                fragmentManager = activity!!.supportFragmentManager,
+                addToBackStack = addToBackStack)
     }
+
 }
