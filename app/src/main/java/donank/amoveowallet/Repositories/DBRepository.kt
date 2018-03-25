@@ -1,12 +1,11 @@
 package donank.amoveowallet.Repositories
 
 import android.os.AsyncTask
-import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.Data.Model.Wallet
 import donank.amoveowallet.Data.WalletDao
 import javax.inject.Inject
 
-class DBRepository constructor(val walletDao: WalletDao)  {
+class DBRepository @Inject constructor(val walletDao: WalletDao)  {
 
     fun saveAddressToDb(wallet : Wallet){
         AsyncTask.execute {

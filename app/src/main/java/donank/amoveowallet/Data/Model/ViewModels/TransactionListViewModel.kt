@@ -3,12 +3,11 @@ package donank.amoveowallet.Data.Model.ViewModels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.os.AsyncTask
 import donank.amoveowallet.Data.Model.Transaction
-import donank.amoveowallet.Data.WalletDao
+import donank.amoveowallet.Repositories.MainRepository
+import javax.inject.Inject
 
-class TransactionListViewModel: ViewModel() {
-    lateinit var walletDao: WalletDao
+class TransactionListViewModel @Inject constructor(val mainRepository: MainRepository): ViewModel() {
     private var transactions = MutableLiveData<List<Transaction>>()
     fun getTransactions(pubKey : String): LiveData<List<Transaction>> {
         if(transactions == null){
@@ -19,8 +18,5 @@ class TransactionListViewModel: ViewModel() {
     }
 
     fun loadWallets(pubKey: String) {
-        AsyncTask.execute {
-            walletDao.getTransactions(pubKey)
-        }
     }
 }

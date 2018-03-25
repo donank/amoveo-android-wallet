@@ -10,11 +10,7 @@ import org.spongycastle.crypto.params.ECPrivateKeyParameters
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import java.math.BigInteger
 import java.security.*
-import java.security.spec.ECGenParameterSpec
-import java.security.Security.insertProviderAt
-import java.util.*
 import org.spongycastle.crypto.params.ECPublicKeyParameters
-import org.spongycastle.asn1.x9.X9ECParameters
 import kotlin.experimental.and
 
 

@@ -1,15 +1,12 @@
 package donank.amoveowallet.Repositories
 
-import android.app.Activity
-import android.content.Context
 import android.util.Log
 import donank.amoveowallet.Api.RESTInterface
-import donank.amoveowallet.Common.showInSnack
 import donank.amoveowallet.Data.Model.Wallet
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class NetworkRepository constructor(val restInterface: RESTInterface) {
+class NetworkRepository @Inject constructor(val restInterface: RESTInterface) {
 
     fun getAddressValue(wallet : Wallet) {
         val command = """["account","${wallet.address}"]"""
