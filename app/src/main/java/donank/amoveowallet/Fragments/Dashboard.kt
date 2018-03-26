@@ -34,7 +34,7 @@ class Dashboard : Fragment() {
     @Inject
     lateinit var walletListViewModelFactory: WalletListViewModelFactory
     lateinit var walletListViewModel : WalletListViewModel
-    private val selectedWalletViewModel = ViewModelProviders.of(activity!!).get(SelectedWalletViewModel::class.java)
+    lateinit var selectedWalletViewModel: SelectedWalletViewModel
 
     fun initLastAdapter(): LastAdapter {
         return LastAdapter(wallets, BR.item)
@@ -75,6 +75,8 @@ class Dashboard : Fragment() {
         walletListViewModel.walletsError().observe(this@Dashboard,Observer<String>{
             showInSnack(this.view!!,"Error while retrieving wallets from db")
         })
+
+        selectedWalletViewModel = ViewModelProviders.of(activity!!).get(SelectedWalletViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =

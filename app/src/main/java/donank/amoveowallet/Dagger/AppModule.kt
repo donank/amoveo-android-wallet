@@ -1,6 +1,7 @@
 package donank.amoveowallet.Dagger
 
 import android.app.Application
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.persistence.room.Room
 import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
@@ -9,7 +10,10 @@ import dagger.Provides
 import donank.amoveowallet.Api.RESTInterface
 import donank.amoveowallet.Repositories.CryptoRepository
 import donank.amoveowallet.Data.AppDatabase
+import donank.amoveowallet.Data.Model.ViewModels.WalletListViewModelFactory
+import donank.amoveowallet.Data.WalletDao
 import donank.amoveowallet.Repositories.DBRepository
+import donank.amoveowallet.Repositories.MainRepository
 import donank.amoveowallet.Repositories.NetworkRepository
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -53,4 +57,8 @@ class AppModule(private val app: Application) {
     @Provides
     @Singleton
     fun ProvideRESTInterface(httpClient: OkHttpClient, moshi: Moshi) = RESTInterface.create(httpClient, moshi)
+
+    @Provides
+    fun provideWalletListViewModelFactory(factory: WalletListViewModelFactory):
+            ViewModelProvider.Factory = factory
 }

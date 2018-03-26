@@ -15,6 +15,7 @@ import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.Data.Model.Transaction
 import donank.amoveowallet.Data.Model.ViewModels.SelectedWalletViewModel
 import donank.amoveowallet.Data.Model.Wallet
+import donank.amoveowallet.Data.Model.WalletType
 import donank.amoveowallet.R
 import donank.amoveowallet.databinding.ItemTransactionBinding
 import kotlinx.android.synthetic.main.fragment_wallet.*
@@ -36,7 +37,11 @@ class Wallet : Fragment() {
 
         val walletModel = ViewModelProviders.of(activity!!).get(SelectedWalletViewModel::class.java)
         walletModel.getSelected().observe(this,Observer<Wallet>{
-
+            if(it!!.type == WalletType.WATCH){
+                bottom_navigation_wallet.visibility = View.GONE
+            }
+            tv_wallet_address.text = it.address
+            tv_wallet_value.text = (it.value/100000000).toString()
         })
     }
 

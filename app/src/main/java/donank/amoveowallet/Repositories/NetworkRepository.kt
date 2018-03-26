@@ -27,4 +27,25 @@ class NetworkRepository @Inject constructor(val restInterface: RESTInterface) {
 
                 })
     }
+
+    fun validPeer(): Pair<Boolean,String>{
+        val command = """["height"]"""
+        var valid = false
+        var height = ""
+        restInterface.postRequest(command)
+                .subscribeOn(Schedulers.newThread())
+                .subscribe({
+                    val res = it.replace("\\s+","").split(",")
+                    if(res[0] == """["ok""""){
+                        height = res[1]
+                        valid = true
+                    }else{
+                        valid = false
+                        height = ""
+                    }
+                },{
+                    Log.d("validPeer","Error during connection!")
+                })
+        return Pair(valid,height)
+    }
 }

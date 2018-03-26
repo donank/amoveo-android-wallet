@@ -10,6 +10,7 @@ import org.spongycastle.jce.provider.BouncyCastleProvider
 import java.math.BigInteger
 import java.security.*
 import org.spongycastle.crypto.params.ECPublicKeyParameters
+import org.spongycastle.util.encoders.Hex
 import kotlin.experimental.and
 
 
@@ -29,8 +30,12 @@ class CryptoRepository {
 
 
 
-    fun sha256(){
+    fun encrypt(data: String): String{
+        return ""
+    }
 
+    fun toHex(data: ByteArray):String{
+        return Hex.toHexString(data)
     }
 
     fun generatePubKey(privateKey : String): String {
@@ -92,7 +97,7 @@ class CryptoRepository {
     //https://stackoverflow.com/questions/31435160/how-to-construct-privatekey-if-you-know-the-curve-name-raw-private-key-point
 
 
-    fun genKeyPair(salt: String?): Pair<ECPrivateKeyParameters, ECPublicKeyParameters> {
+    fun genKeyPair(): Pair<ECPrivateKeyParameters, ECPublicKeyParameters> {
         generator.init(keygenParams)
         val keyPair = generator.generateKeyPair()
         val privParams = keyPair.private as ECPrivateKeyParameters
