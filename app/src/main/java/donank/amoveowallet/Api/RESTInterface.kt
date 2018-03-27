@@ -3,17 +3,19 @@ package donank.amoveowallet.Api
 import com.squareup.moshi.Moshi
 import donank.amoveowallet.Data.AppPref
 import io.reactivex.Observable
+import io.reactivex.Single
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface RESTInterface {
 
-    @POST(".")
-    fun postRequest(@Body command : String): Observable<String>
+    @POST
+    fun postRequest(@Body requestBody : RequestBody, @Url url:String = AppPref.peerUrl): Single<ResponseBody>
 
     companion object {
         fun create(client:OkHttpClient, moshi: Moshi): RESTInterface {

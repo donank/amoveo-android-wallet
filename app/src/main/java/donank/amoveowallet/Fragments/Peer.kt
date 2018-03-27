@@ -2,6 +2,7 @@ package donank.amoveowallet.Fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,8 @@ import donank.amoveowallet.R
 import donank.amoveowallet.Repositories.DBRepository
 import donank.amoveowallet.Repositories.MainRepository
 import donank.amoveowallet.Repositories.NetworkRepository
+import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_peer.*
 import javax.inject.Inject
 
@@ -40,27 +43,38 @@ class Peer : Fragment() {
         super.onActivityCreated(savedInstanceState)
         edit_peer.setText(AppPref.peerUrl)
 
+        edit_peer_btn.setOnClickListener {
+            edit_peer.isEnabled = true
+        }
+
         test_peer_btn.setOnClickListener {
+            progressbar.visibility = View.VISIBLE
             when{
                 edit_peer.text.isEmpty() -> showInSnack(this.view!!,"Empty Peer Input")
                 else ->{
-                    val oldUrl = AppPref.peerUrl
-                    AppPref.peerUrl = edit_peer.text.toString()
-                    val test = mainRepository.validPeer()
-                    if(test.first){
-                        AppPref.validPeer = true
-                        change_peer_btn.isEnabled
-                        tv_height.text = test.second
-                    }else{
-                        AppPref.peerUrl = oldUrl
-                        showInSnack(this.view!!,"Invalid Peer")
+                    val url = edit_peer.text.toString()
+                    mainRepository.validPeer(url)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(AndroidSchedulers.mainThread())
+                            .subscribe {
+                        val res = it.replace("\\s+","").split(",")
+                        if(res[0] == "[\"ok\""){
+                            tv_height.text = res[1].split("]").first()
+                            edit_peer.isEnabled = false
+                            submit_peer_btn.isEnabled = true
+                        }else{
+                            tv_height.text = "0"
+                            showInSnack(this.view!!,"Unable to connect to peer.")
+                        }
                     }
+
                 }
             }
         }
 
-        change_peer_btn.setOnClickListener {
-            if(!edit_peer.text.isEmpty() && AppPref.validPeer){
+        submit_peer_btn.setOnClickListener {
+            if(!edit_peer.text.isEmpty()){
+                submit_peer_btn.isEnabled = false
                 AppPref.peerUrl = edit_peer.text.toString()
             }else{
                 showInSnack(this.view!!,"Invalid Peer")

@@ -2,20 +2,24 @@ package donank.amoveowallet.Repositories
 
 import android.util.Log
 import donank.amoveowallet.Api.RESTInterface
-import donank.amoveowallet.Data.Model.Wallet
+import io.reactivex.*
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class NetworkRepository @Inject constructor(val restInterface: RESTInterface) {
 
-    fun getAddressValue(wallet : Wallet) {
-        val command = """["account","${wallet.address}"]"""
-        restInterface.postRequest(command)
+    fun getAddressValue(requestBody: RequestBody):Long {
+        var value = 0L
+        restInterface.postRequest(requestBody)
                 .subscribeOn(Schedulers.newThread())
                 .subscribe({
-                    val res = it.replace("\\s+","").split(",")
+                    val res = it.toString().replace("\\s+","").split(",")
                     if(res[0] == """["ok""""){
-                        wallet.value = res[2].toLong()
+                        value = res[2].toLong()
                     }else{
 
                             Log.d("GETADDRESSVALUE","Error loading account details!")
@@ -26,26 +30,12 @@ class NetworkRepository @Inject constructor(val restInterface: RESTInterface) {
                         Log.d("GETADDRESSVALUE","Error loading account details!")
 
                 })
+        return value
     }
 
-    fun validPeer(): Pair<Boolean,String>{
-        val command = """["height"]"""
-        var valid = false
-        var height = ""
-        restInterface.postRequest(command)
-                .subscribeOn(Schedulers.newThread())
-                .subscribe({
-                    val res = it.replace("\\s+","").split(",")
-                    if(res[0] == """["ok""""){
-                        height = res[1]
-                        valid = true
-                    }else{
-                        valid = false
-                        height = ""
-                    }
-                },{
-                    Log.d("validPeer","Error during connection!")
-                })
-        return Pair(valid,height)
+    fun validPeer(url: String, requestBody: RequestBody): Single<ResponseBody> {
+        return restInterface.postRequest(requestBody,url).subscribeOn(Schedulers.newThread())
+                .doOnSuccess { it }
+                .onErrorReturn { ResponseBody.create(MediaType.parse("text/plain"),"error")}
     }
 }
