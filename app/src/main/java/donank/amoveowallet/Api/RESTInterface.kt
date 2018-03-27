@@ -15,7 +15,7 @@ import retrofit2.http.*
 interface RESTInterface {
 
     @POST
-    fun postRequest(@Body requestBody : RequestBody, @Url url:String = AppPref.peerUrl): Single<ResponseBody>
+    fun postRequest(@Body requestBody : RequestBody, @Url url:String): Single<ResponseBody>
 
     companion object {
         fun create(client:OkHttpClient, moshi: Moshi): RESTInterface {

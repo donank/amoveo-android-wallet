@@ -17,6 +17,8 @@ import donank.amoveowallet.Repositories.CryptoRepository
 import donank.amoveowallet.Repositories.DBRepository
 import donank.amoveowallet.Repositories.MainRepository
 import donank.amoveowallet.Repositories.NetworkRepository
+import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.fragment_wallet.*
 import kotlinx.android.synthetic.main.fragment_watch.*
 import javax.inject.Inject
 
@@ -44,45 +46,57 @@ class WatchWallet : Fragment() {
 
         edit_watch_account_name.setText("Wallet".plus(mainRepository.getWalletCountFromDb() + 1))
 
-        watch_submit_btn.setOnClickListener {
+        watch_verify_btn.setOnClickListener {
             when {
                 edit_watch_account_address.text.isEmpty() -> {
                     showInSnack(this.view!!, "Input Address is empty")
                 }
-                else -> validateAndSave(
-                        edit_watch_account_name.text.toString(),
-                        WalletType.WATCH,
-                        edit_watch_account_address.text.toString().replace("\\s+", "")
-                )
+                else -> {
+                    val address = edit_watch_account_address.text.toString()
+                    val valid = cryptoRepository.validateAddress(address)
+                    if(valid){
+                        getWalletDetails(address)
+                        watch_save_btn.isEnabled = true
+                    }else{
+                        showInSnack(this.view!!, "Invalid Address.")
+                    }
+                }
             }
         }
-        watch_cancel_btn.setOnClickListener {
-            showFragment(
-                    Fragment.instantiate(
-                            activity,
-                            Dashboard::class.java.name
-                    ),
-                    false
+
+        watch_save_btn.setOnClickListener {
+            watch_save_btn.isEnabled = false
+            save(
+                    Wallet(
+                            tv_watch_address.text.toString(),
+                            (tv_watch_value.text.toString().toDouble() * 100000000).toLong(),
+                            edit_watch_account_name.text.toString(),
+                            WalletType.WATCH,
+                            ""
+                    )
             )
         }
 
     }
 
-    fun validateAndSave(inputName : String, walletType: WalletType, inputAddress : String) {
-        val valid = cryptoRepository.validateAddress(inputAddress)
-        val inputPassword = ""
-        if (valid) {
-            mainRepository.saveWalletToDb(
-                    Wallet(
-                    address = inputAddress,
-                    value = 0,
-                    name = inputName,
-                    password = inputPassword,
-                    type = walletType
-            ))
-        } else {
-            showInSnack(this.view!!, "Invalid Address format")
-        }
+    fun getWalletDetails(inputAddress : String){
+        val command = "[\"account\",\"$inputAddress\"]"
+        mainRepository.request(command).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    val res = it.replace("\\s+","").split(",")
+                    if(res[0] == "[\"ok\""){
+                        tv_watch_address.text = inputAddress
+                        tv_watch_valid.text = "true"
+                        tv_watch_value.text = (res[2].toLong()/100000000.0).toString()
+                    }else{
+                        showInSnack(this.view!!,"Invalid Address.")
+                    }
+                }
+    }
+
+    fun save(wallet: Wallet){
+        mainRepository.saveWalletToDb(wallet)
     }
 
     private fun showFragment(fragment: Fragment, addToBackStack: Boolean = true) {

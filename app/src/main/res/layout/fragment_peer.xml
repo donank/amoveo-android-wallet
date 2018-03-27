@@ -52,7 +52,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:id="@+id/tv_height"/>
+            android:id="@+id/tv_height"
+            android:text="0"/>
     </LinearLayout>
 
     <LinearLayout
@@ -66,7 +67,7 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:id="@+id/test_peer_btn"
-            android:text="TEST"
+            android:text="VERIFY"
             android:layout_weight="1"/>
 
         <Button

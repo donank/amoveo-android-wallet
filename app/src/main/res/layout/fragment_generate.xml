@@ -43,14 +43,6 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/generate_submit_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SUBMIT"
-            android:visibility="gone"/>
-
-        <Button
             android:id="@+id/generate_new_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,10 +50,12 @@
             android:text="GENERATE"/>
 
         <Button
-            android:id="@+id/generate_cancel_btn"
+            android:id="@+id/generate_submit_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="CANCEL" />
+            android:text="SAVE"
+            android:enabled="false"/>
+
     </LinearLayout>
 </LinearLayout>

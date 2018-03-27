@@ -45,15 +45,16 @@ class Peer : Fragment() {
 
         edit_peer_btn.setOnClickListener {
             edit_peer.isEnabled = true
+            submit_peer_btn.isEnabled = false
         }
 
         test_peer_btn.setOnClickListener {
-            progressbar.visibility = View.VISIBLE
             when{
                 edit_peer.text.isEmpty() -> showInSnack(this.view!!,"Empty Peer Input")
                 else ->{
                     val url = edit_peer.text.toString()
-                    mainRepository.validPeer(url)
+                    val command = "[\"height\"]"
+                    mainRepository.request(command, url)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(AndroidSchedulers.mainThread())
                             .subscribe {
@@ -62,6 +63,7 @@ class Peer : Fragment() {
                             tv_height.text = res[1].split("]").first()
                             edit_peer.isEnabled = false
                             submit_peer_btn.isEnabled = true
+                            showInSnack(this.view!!,"Verified")
                         }else{
                             tv_height.text = "0"
                             showInSnack(this.view!!,"Unable to connect to peer.")

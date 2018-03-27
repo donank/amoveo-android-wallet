@@ -3,44 +3,113 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingHorizontal="20dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditText
         android:id="@+id/edit_watch_account_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
         android:layout_marginTop="100dp"
         android:hint="Name" />
 
-    <EditText
-        android:id="@+id/edit_watch_account_address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="20dp"
-        android:hint="Public Key" />
+
+        <EditText
+            android:paddingTop="16dp"
+            android:id="@+id/edit_watch_account_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Public Key" />
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="20dp"
+        android:paddingTop="16dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/watch_verify_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="VERIFY" />
+
+        <Button
+            android:id="@+id/watch_save_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="SAVE"
+            android:enabled="false"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/watch_submit_btn"
+        <TextView android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SUBMIT" />
+            android:text="Valid"
+            android:textSize="20sp"/>
 
-        <Button
-            android:id="@+id/watch_cancel_btn"
+        <TextView android:gravity="end"
+            android:paddingHorizontal="20dp"
+            android:id="@+id/tv_watch_valid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="CANCEL" />
+            android:textSize="20sp"/>
     </LinearLayout>
+
+    <LinearLayout android:paddingTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Address"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:paddingTop="6dp"
+            android:paddingHorizontal="20dp"
+            android:id="@+id/tv_watch_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total"
+            android:textSize="20sp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:paddingTop="6dp"
+            android:paddingHorizontal="20dp"
+            android:id="@+id/tv_watch_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0"
+            android:textSize="20sp"
+            android:gravity="end"/>
+    </LinearLayout>
+
 </LinearLayout>

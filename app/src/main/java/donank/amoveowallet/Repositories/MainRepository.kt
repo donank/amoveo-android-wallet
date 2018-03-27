@@ -4,8 +4,6 @@ import android.util.Log
 import donank.amoveowallet.Data.AppPref
 import donank.amoveowallet.Data.Model.Wallet
 import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -28,9 +26,8 @@ class MainRepository @Inject constructor(val dbRepository: DBRepository, val net
         return  dbRepository.getWallets()
     }
 
-    fun validPeer(url: String): Observable<String> {
-        val command = "[\"height\"]"
-        return networkRepository.validPeer(url,createRequestBody(command)).map { it.string() }.toObservable()
+    fun request(command: String,url: String = AppPref.peerUrl): Observable<String> {
+        return networkRepository.request(createRequestBody(command),url).map { it.string() }.toObservable()
     }
 
     fun createRequestBody(command : String): RequestBody {

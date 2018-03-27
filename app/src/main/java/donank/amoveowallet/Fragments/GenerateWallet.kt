@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import donank.amoveowallet.Api.RESTInterface
 import donank.amoveowallet.Utility.showFragment
 import donank.amoveowallet.Dagger.MainApplication
+import donank.amoveowallet.Data.Model.Wallet
 import donank.amoveowallet.Data.Model.WalletType
 import donank.amoveowallet.Data.WalletDao
 import donank.amoveowallet.R
@@ -17,6 +18,7 @@ import donank.amoveowallet.Repositories.DBRepository
 import donank.amoveowallet.Repositories.MainRepository
 import donank.amoveowallet.Repositories.NetworkRepository
 import kotlinx.android.synthetic.main.fragment_generate.*
+import kotlinx.android.synthetic.main.fragment_generate.view.*
 import org.spongycastle.util.encoders.Base64
 import javax.inject.Inject
 
@@ -46,36 +48,26 @@ class GenerateWallet : Fragment() {
 
             val keyPair = cryptoHelper.genKeyPair()
             tv_generate_account_privkey.text = cryptoHelper.toHex(keyPair.first.d.toByteArray())
-            val pub64 = Base64.toBase64String(keyPair.second.q.getEncoded(false),0,88)
-            tv_generate_account_pubkey.text = pub64.toString()
-            generate_new_btn.visibility = View.GONE
-            generate_submit_btn.visibility = View.VISIBLE
-
-            Log.d("PrivKeyHex",tv_generate_account_privkey.text.toString())
-            Log.d("PrivKeyBA","${keyPair.first.d}")
-            Log.d("Pubkey","${keyPair.second.q.getEncoded(false)}")
-            Log.d("Pubkey64","$pub64")
+            var pub64 = ""
+            try{
+                pub64 = Base64.toBase64String(keyPair.second.q.getEncoded(false))
+            }catch (e: Exception){
+                Log.d("toBase64",e.message)
+            }
+            tv_generate_account_pubkey.text = pub64
+            generate_submit_btn.isEnabled = true
 
         }
 
         generate_submit_btn.setOnClickListener {
-            mainRepository.saveWalletToDb(donank.amoveowallet.Data.Model.Wallet(
-                    tv_generate_account_pubkey.toString().replace("\\s",""),
+            generate_submit_btn.isEnabled = false
+            mainRepository.saveWalletToDb(Wallet(
+                    tv_generate_account_pubkey.text.toString().replace("\\s",""),
                     0,
-                    edit_generate_account_name.toString(),
+                    edit_generate_account_name.text.toString(),
                     WalletType.SINGLE,
-                    tv_generate_account_privkey.toString().replace("\\s","")
+                    tv_generate_account_privkey.text.toString().replace("\\s","")
             ))
-        }
-
-        generate_cancel_btn.setOnClickListener {
-            showFragment(
-                    Fragment.instantiate(
-                            activity,
-                        Dashboard::class.java.name
-                    ),
-                    false
-            )
         }
     }
 

@@ -28,12 +28,13 @@
             android:paddingLeft="20dp"/>
 
         <android.support.v7.widget.RecyclerView
-            android:paddingHorizontal="20dp"
+            android:paddingHorizontal="10dp"
             android:background="#4281A4"
             android:id="@+id/wallet_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="20dp" />
+            android:paddingTop="20dp"
+            android:scrollbars="vertical"/>
 
     </LinearLayout>
 
