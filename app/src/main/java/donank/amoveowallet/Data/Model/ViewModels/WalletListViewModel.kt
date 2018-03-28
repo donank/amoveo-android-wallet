@@ -3,7 +3,7 @@ package donank.amoveowallet.Data.Model.ViewModels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import donank.amoveowallet.Data.Model.Wallet
+import donank.amoveowallet.Data.Model.WalletModel
 import donank.amoveowallet.Repositories.MainRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
@@ -12,12 +12,12 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class WalletListViewModel @Inject constructor(val mainRepository: MainRepository) : ViewModel() {
-    private var walletsSuccess = MutableLiveData<List<Wallet>>()
+    private var walletsSuccess = MutableLiveData<List<WalletModel>>()
     var walletsError: MutableLiveData<String> = MutableLiveData()
 
-    lateinit var disposableObserver: DisposableObserver<List<Wallet>>
+    lateinit var disposableObserver: DisposableObserver<List<WalletModel>>
 
-    fun walletsResult(): LiveData<List<Wallet>>{
+    fun walletsResult(): LiveData<List<WalletModel>>{
         return walletsSuccess
     }
 
@@ -26,12 +26,12 @@ class WalletListViewModel @Inject constructor(val mainRepository: MainRepository
     }
 
     fun loadWallets(){
-        disposableObserver = object : DisposableObserver<List<Wallet>>() {
+        disposableObserver = object : DisposableObserver<List<WalletModel>>() {
             override fun onComplete() {
 
             }
 
-            override fun onNext(cryptocurrencies: List<Wallet>) {
+            override fun onNext(cryptocurrencies: List<WalletModel>) {
                 walletsSuccess.postValue(cryptocurrencies)
             }
 

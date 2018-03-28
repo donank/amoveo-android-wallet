@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import donank.amoveowallet.Utility.showFragment
 import donank.amoveowallet.Data.Model.ViewModels.SelectedWalletViewModel
-import donank.amoveowallet.Data.Model.Wallet
+import donank.amoveowallet.Data.Model.WalletModel
 import donank.amoveowallet.R
 import donank.amoveowallet.Repositories.CryptoRepository
 import kotlinx.android.synthetic.main.fragment_send.*
@@ -22,7 +22,7 @@ class Send : Fragment() {
         super.onCreate(savedInstanceState)
 
         val walletModel = ViewModelProviders.of(activity!!).get(SelectedWalletViewModel::class.java)
-        walletModel.getSelected().observe(this, Observer<Wallet>{
+        walletModel.getSelected().observe(this, Observer<WalletModel>{
         })
     }
 

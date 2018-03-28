@@ -1,28 +1,28 @@
 package donank.amoveowallet.Repositories
 
-import android.util.Log
 import donank.amoveowallet.Data.AppPref
-import donank.amoveowallet.Data.Model.Wallet
+import donank.amoveowallet.Data.Model.WalletModel
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import javax.inject.Inject
 
 class MainRepository @Inject constructor(val dbRepository: DBRepository, val networkRepository: NetworkRepository) {
 
-    fun saveWalletToDb(wallet : Wallet){
-        dbRepository.saveWalletToDb(wallet)
+    fun saveWalletToDb(walletModel : WalletModel){
+        dbRepository.saveWalletToDb(walletModel)
     }
 
-    fun getWalletCountFromDb(): String{
-        return dbRepository.getWalletCountFromDb()
+    fun getWalletCountFromDb(): Observable<Int>{
+        return dbRepository.getWalletCountFromDb().subscribeOn(Schedulers.newThread()).toObservable()
     }
 
-    fun update(wallet : Wallet){
-        dbRepository.update(wallet)
+    fun update(walletModel : WalletModel){
+        dbRepository.update(walletModel)
     }
 
-    fun getWallets(): Observable<List<Wallet>> {
+    fun getWallets(): Observable<List<WalletModel>> {
         return  dbRepository.getWallets()
     }
 

@@ -17,7 +17,7 @@ import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.Data.Model.ViewModels.SelectedWalletViewModel
 import donank.amoveowallet.R
 import kotlinx.android.synthetic.main.fragment_dashboard.*
-import donank.amoveowallet.Data.Model.Wallet
+import donank.amoveowallet.Data.Model.*
 import donank.amoveowallet.Data.Model.ViewModels.WalletListViewModel
 import donank.amoveowallet.Data.Model.ViewModels.WalletListViewModelFactory
 import donank.amoveowallet.databinding.ItemWalletBinding
@@ -27,7 +27,7 @@ class Dashboard : Fragment() {
 
     private val TAG = Dashboard::class.simpleName
 
-    private val wallets = ObservableArrayList<Wallet>()
+    private val wallets = ObservableArrayList<WalletModel>()
     private val lastAdapter: LastAdapter by lazy { initLastAdapter() }
 
     //https://medium.com/@cdmunoz/offline-first-android-app-with-mvvm-dagger2-rxjava-livedata-and-room-part-4-2b476142e769
@@ -38,7 +38,7 @@ class Dashboard : Fragment() {
 
     fun initLastAdapter(): LastAdapter {
         return LastAdapter(wallets, BR.item)
-                .map<Wallet, ItemWalletBinding>(R.layout.item_wallet) {
+                .map<WalletModel, ItemWalletBinding>(R.layout.item_wallet) {
                     onBind {
                         it.itemView.setOnClickListener { _ ->
                             selectedWalletViewModel.select(it.binding.item!!)
@@ -67,7 +67,7 @@ class Dashboard : Fragment() {
 
         walletListViewModel.loadWallets()
 
-        walletListViewModel.walletsResult().observe(this@Dashboard, Observer<List<Wallet>>{
+        walletListViewModel.walletsResult().observe(this@Dashboard, Observer<List<WalletModel>>{
             wallets.addAll(it!!)
             lastAdapter.notifyDataSetChanged()
         })

@@ -3,7 +3,7 @@
     <data>
         <variable
             name = "item"
-            type = "donank.amoveowallet.Data.Model.Wallet"/>
+            type = "donank.amoveowallet.Data.Model.WalletModel"/>
     </data>
 
     <android.support.v7.widget.CardView

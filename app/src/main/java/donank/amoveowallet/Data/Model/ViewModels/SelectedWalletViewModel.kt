@@ -3,16 +3,15 @@ package donank.amoveowallet.Data.Model.ViewModels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import donank.amoveowallet.Data.Model.Wallet
-import donank.amoveowallet.Data.WalletDao
+import donank.amoveowallet.Data.Model.WalletModel
 
 class SelectedWalletViewModel : ViewModel() {
-    private var selectedWallet = MutableLiveData<Wallet>()
-    fun select(wallet: Wallet) {
-        selectedWallet.value = wallet
+    private var selectedWallet = MutableLiveData<WalletModel>()
+    fun select(walletModel: WalletModel) {
+        selectedWallet.value = walletModel
     }
 
-    fun getSelected(): LiveData<Wallet>{
+    fun getSelected(): LiveData<WalletModel>{
         return selectedWallet
     }
 }

@@ -12,9 +12,9 @@ import com.github.nitrico.lastadapter.LastAdapter
 import donank.amoveowallet.BR
 import donank.amoveowallet.Utility.showFragment
 import donank.amoveowallet.Dagger.MainApplication
-import donank.amoveowallet.Data.Model.Transaction
+import donank.amoveowallet.Data.Model.TransactionModel
 import donank.amoveowallet.Data.Model.ViewModels.SelectedWalletViewModel
-import donank.amoveowallet.Data.Model.Wallet
+import donank.amoveowallet.Data.Model.WalletModel
 import donank.amoveowallet.Data.Model.WalletType
 import donank.amoveowallet.R
 import donank.amoveowallet.databinding.ItemTransactionBinding
@@ -22,27 +22,21 @@ import kotlinx.android.synthetic.main.fragment_wallet.*
 
 class Wallet : Fragment() {
 
-    private val transactions = ObservableArrayList<Transaction>()
+    private val transactions = ObservableArrayList<TransactionModel>()
     private val lastAdapter: LastAdapter by lazy { initLastAdapter() }
-
+    lateinit var selectedWalletViewModel: SelectedWalletViewModel
 
     fun initLastAdapter() : LastAdapter{
         return LastAdapter(transactions, BR.item)
-                .map<Transaction, ItemTransactionBinding>(R.layout.item_transaction)
+                .map<TransactionModel, ItemTransactionBinding>(R.layout.item_transaction)
                 .into(transactions_recycler)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity!!.application as MainApplication).component.inject(this)
 
-        val walletModel = ViewModelProviders.of(activity!!).get(SelectedWalletViewModel::class.java)
-        walletModel.getSelected().observe(this,Observer<Wallet>{
-            if(it!!.type == WalletType.WATCH){
-                bottom_navigation_wallet.visibility = View.GONE
-            }
-            tv_wallet_address.text = it.address
-            tv_wallet_value.text = (it.value/100000000).toString()
-        })
+        selectedWalletViewModel = ViewModelProviders.of(activity!!).get(SelectedWalletViewModel::class.java)
+
     }
 
 
@@ -51,6 +45,14 @@ class Wallet : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        selectedWalletViewModel.getSelected().observe(this,Observer<WalletModel>{
+            if(it!!.type == WalletType.WATCH){
+                bottom_navigation_wallet.visibility = View.GONE
+            }
+            tv_wallet_address.text = it.address
+            tv_wallet_value.text = it.value.toString()
+        })
 
         bottom_navigation_wallet.setOnNavigationItemSelectedListener(
                 { item ->

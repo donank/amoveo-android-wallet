@@ -3,7 +3,7 @@
     <data>
         <variable
             name = "item"
-            type = "donank.amoveowallet.Data.Model.Transaction"/>
+            type = "donank.amoveowallet.Data.Model.TransactionModel"/>
     </data>
 
         <LinearLayout

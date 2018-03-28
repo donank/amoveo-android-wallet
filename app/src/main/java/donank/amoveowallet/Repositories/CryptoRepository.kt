@@ -1,6 +1,6 @@
 package donank.amoveowallet.Repositories
 
-import android.util.Base64
+import android.util.Log
 import org.spongycastle.asn1.sec.SECNamedCurves
 import org.spongycastle.crypto.generators.ECKeyPairGenerator
 import org.spongycastle.crypto.params.ECDomainParameters
@@ -10,8 +10,8 @@ import org.spongycastle.jce.provider.BouncyCastleProvider
 import java.math.BigInteger
 import java.security.*
 import org.spongycastle.crypto.params.ECPublicKeyParameters
+import org.spongycastle.util.encoders.Base64
 import org.spongycastle.util.encoders.Hex
-import kotlin.experimental.and
 
 
 class CryptoRepository {
@@ -33,10 +33,13 @@ class CryptoRepository {
         return Hex.toHexString(data)
     }
 
+    fun bytesToHex(bytes: ByteArray): String {
+        return Hex.toHexString(bytes)
+    }
+
     fun generatePubKey(privateKey : String): String {
         val privKey = BigInteger(privateKey, 16)
-        val ecp = SECNamedCurves.getByName("secp256k1")
-        val curvePt = ecp.g.multiply(privKey)
+        val curvePt = curve.g.multiply(privKey)
         val x = curvePt.x.toBigInteger()
         val y = curvePt.y.toBigInteger()
         val xBytes = removeSignByte(x.toByteArray())
@@ -45,7 +48,7 @@ class CryptoRepository {
         pubKeyBytes[0] = "04".toByte()
         System.arraycopy(xBytes, 0, pubKeyBytes, 1, xBytes.size)
         System.arraycopy(yBytes, 0, pubKeyBytes, 33, yBytes.size)
-        return this.bytesToHex(pubKeyBytes)
+        return Base64.toBase64String(pubKeyBytes)
     }
 
     private fun removeSignByte(arr: ByteArray): ByteArray {
@@ -57,22 +60,12 @@ class CryptoRepository {
         return arr
     }
 
-    fun bytesToHex(bytes: ByteArray): String {
-        val hexChars = CharArray(bytes.size * 2)
-        var v: Int
-        for (j in bytes.indices) {
-            v = bytes[j].and(0xFF.toByte()).toInt()
-            hexChars[j * 2] = hexArray[v.ushr(4)]
-            hexChars[j * 2 + 1] = hexArray[v and 0x0F]
-        }
-        return String(hexChars)
-    }
 
     //https://stackoverflow.com/questions/8571501/how-to-check-whether-the-string-is-base64-encoded-or-not
     fun validateAddress(address: String): Boolean{
         return if(!address.isEmpty()){
             try {
-                Base64.decode(address, Base64.DEFAULT)
+                Base64.decode(address)
             }catch (e: Exception){
                 false
             }
@@ -91,7 +84,7 @@ class CryptoRepository {
         return Pair(privParams,pubParams)
     }
 
-    //Brain Wallet ->
+    //Brain WalletModel ->
     //String -> Sha256(String) -> tohex -> encode to base64 private key
 
 
@@ -106,7 +99,8 @@ class CryptoRepository {
 
     }
 
-    fun signData(pKey : String, data : String){
+    //"["txs", [-6, t2]]"
+    fun sign(pKey : String, hash : ByteArray){
 
     }
 

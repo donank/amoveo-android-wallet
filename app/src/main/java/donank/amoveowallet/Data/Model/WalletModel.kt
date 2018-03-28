@@ -4,7 +4,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 
 @Entity(tableName = "wallet")
-data class Wallet(
+data class WalletModel(
         var address: String,
         var value : Long = 0,
         var name: String,

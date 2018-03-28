@@ -9,7 +9,7 @@ import donank.amoveowallet.Api.RESTInterface
 import donank.amoveowallet.Utility.showFragment
 import donank.amoveowallet.Utility.showInSnack
 import donank.amoveowallet.Dagger.MainApplication
-import donank.amoveowallet.Data.Model.Wallet
+import donank.amoveowallet.Data.Model.WalletModel
 import donank.amoveowallet.Data.Model.WalletType
 import donank.amoveowallet.Data.WalletDao
 import donank.amoveowallet.R
@@ -18,7 +18,6 @@ import donank.amoveowallet.Repositories.DBRepository
 import donank.amoveowallet.Repositories.MainRepository
 import donank.amoveowallet.Repositories.NetworkRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.fragment_wallet.*
 import kotlinx.android.synthetic.main.fragment_watch.*
 import javax.inject.Inject
 
@@ -44,7 +43,12 @@ class WatchWallet : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        edit_watch_account_name.setText("Wallet".plus(mainRepository.getWalletCountFromDb() + 1))
+        mainRepository.getWalletCountFromDb()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    edit_watch_account_name.setText("WalletModel".plus(it + 1))
+                }
 
         watch_verify_btn.setOnClickListener {
             when {
@@ -67,7 +71,7 @@ class WatchWallet : Fragment() {
         watch_save_btn.setOnClickListener {
             watch_save_btn.isEnabled = false
             save(
-                    Wallet(
+                    WalletModel(
                             tv_watch_address.text.toString(),
                             (tv_watch_value.text.toString().toDouble() * 100000000).toLong(),
                             edit_watch_account_name.text.toString(),
@@ -95,8 +99,8 @@ class WatchWallet : Fragment() {
                 }
     }
 
-    fun save(wallet: Wallet){
-        mainRepository.saveWalletToDb(wallet)
+    fun save(walletModel: WalletModel){
+        mainRepository.saveWalletToDb(walletModel)
     }
 
     private fun showFragment(fragment: Fragment, addToBackStack: Boolean = true) {
