@@ -42,4 +42,8 @@ class MainRepository @Inject constructor(val dbRepository: DBRepository, val net
     fun saveContactToDb(contact: ContactsModel) {
         dbRepository.saveContact(contact)
     }
+
+    fun updateContact(contact: ContactsModel) {
+        dbRepository.updateContact(contact)
+    }
 }

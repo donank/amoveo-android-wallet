@@ -32,6 +32,16 @@ class Send : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+
+        /*
+        * ["ok",
+        * ["spend",
+        * "BKdkHXUeBIgzqyQ0morfNcw2AKIc/n1NAt0pK34ESnaC62mpSSMAqMsArWIqcyWWACdIL9r82UhnuUJIbueRH04=",
+        * 2023,1000000,
+        * "BDGmaFo6kpzQBRrrnqLjWOuzfqtpd+GqPB3kOQjkoKRdj8fCWW22MBt4zhtaCOqhQQofKL7dfZkdpbDRrb+wWhE=",
+        * 100000000,0]]
+        */
+
         send_btn.setOnClickListener {
             cryptoRepository.generateTransaction(edit_send_addres.text.toString(), edit_send_amount.text.toString())
         }

@@ -9,7 +9,7 @@ import io.reactivex.Single
 @Dao
 interface WalletDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun save(walletModel: WalletModel)
 
     @Update
@@ -30,6 +30,9 @@ interface WalletDao {
     @Query("select * from contact")
     fun getContacs(): Single<List<ContactsModel>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveContact(contact: ContactsModel)
+
+    @Update
+    fun updateContact(contactModel: ContactsModel)
 }

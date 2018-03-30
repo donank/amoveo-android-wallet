@@ -109,8 +109,6 @@ dependencies {
 
     kapt "android.arch.lifecycle:compiler:1.1.1"
 
-    //SqlCipher
-    implementation 'net.zetetic:android-database-sqlcipher:3.5.9'
 
 }
 repositories {

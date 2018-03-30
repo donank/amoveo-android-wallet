@@ -41,4 +41,10 @@ class DBRepository @Inject constructor(val walletDao: WalletDao)  {
         }
     }
 
+    fun updateContact(contact: ContactsModel) {
+        AsyncTask.execute {
+            walletDao.updateContact(contact)
+        }
+    }
+
 }

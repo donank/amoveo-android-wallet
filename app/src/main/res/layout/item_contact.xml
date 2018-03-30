@@ -11,13 +11,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingLeft="20dp">
+        android:paddingLeft="20dp"
+        android:layout_marginVertical="20dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_person_black_24dp"/>
 
         <TextView android:id="@+id/tv_contact_name"
-            android:layout_width="match_parent"
+            android:paddingLeft="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@{item.name}"/>
+            android:text="@{item.name.toUpperCase()}"/>
 
     </LinearLayout>
 

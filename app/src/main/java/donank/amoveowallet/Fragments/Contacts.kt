@@ -40,7 +40,8 @@ class Contacts : Fragment() {
                 {
                     onBind {
                         it.itemView.setOnClickListener {_->
-                            selectedContactsModel.select(it.binding.item)
+                            it.binding.item!!.edit = true
+                            selectedContactsModel.select(it.binding.item!!)
                             showFragment(
                                     Fragment.instantiate(
                                             activity,
