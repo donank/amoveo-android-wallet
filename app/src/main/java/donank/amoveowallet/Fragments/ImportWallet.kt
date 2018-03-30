@@ -62,7 +62,7 @@ class ImportWallet : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    edit_import_account_name.setText("WalletModel".plus(it + 1))
+                    edit_import_account_name.setText("Wallet".plus(it + 1))
                 }
 
         select_priv_key_file.setOnClickListener {

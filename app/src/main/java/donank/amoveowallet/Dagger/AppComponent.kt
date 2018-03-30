@@ -23,7 +23,6 @@ interface AppComponent {
     fun inject(importWallet: ImportWallet)
     fun inject(watchWallet: WatchWallet)
     fun inject(dbRepository: DBRepository)
-    fun inject(receive: Receive) {
-
-    }
+    fun inject(receive: Receive)
+    fun inject(selectedContact: SelectedContact)
 }

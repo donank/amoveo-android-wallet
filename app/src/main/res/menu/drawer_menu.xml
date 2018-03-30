@@ -9,7 +9,12 @@
         <item
             android:id="@+id/nav_peer"
             android:icon="@drawable/ic_compare_arrows_black_24dp"
-            android:title="Peer"/>
+            android:title="Peer" />
+
+        <item
+            android:id="@+id/nav_participate"
+            android:icon="@drawable/ic_casino_black_24dp"
+            android:title="Participate"/>
 
         <item
             android:id="@+id/nav_contacts"

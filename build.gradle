@@ -2,14 +2,14 @@
 
 buildscript {
 
-    ext.kotlin_version = '1.2.30'
+    ext.kotlin_version = '1.2.31'
     ext.dagger_version = '2.10'
     ext.retrofit_version = '2.3.0'
     ext.moshi_version = '1.5.0'
     ext.gradle_version = '2.3.3'
     ext.kotpref_version = '2.3.0'
     ext.okhttp_version = '3.9.0'
-    ext.gradle_version = '3.1.0-beta1'
+    ext.gradle_version = '3.2.0-alpha08'
 
     repositories {
         google()

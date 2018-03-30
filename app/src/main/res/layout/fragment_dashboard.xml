@@ -5,38 +5,14 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="20dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="Total Balance"
-            android:textSize="20sp"
-            android:paddingLeft="20dp"/>
-
-        <TextView
-            android:id="@+id/tv_total_balance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="100 Ɐ"
-            android:textSize="40sp"
-            android:paddingLeft="20dp"/>
 
         <android.support.v7.widget.RecyclerView
             android:paddingHorizontal="10dp"
-            android:background="#4281A4"
             android:id="@+id/wallet_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="20dp"
-            android:scrollbars="vertical"/>
-
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="90dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 
     <!--<android.support.design.widget.FloatingActionButton
@@ -70,7 +46,5 @@
             app:menu="@menu/bottom_navigation_menu" />
 
     </RelativeLayout>
-
-
 
 </android.support.design.widget.CoordinatorLayout>

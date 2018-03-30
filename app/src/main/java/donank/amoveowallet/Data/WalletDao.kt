@@ -1,6 +1,7 @@
 package donank.amoveowallet.Data
 
 import android.arch.persistence.room.*
+import donank.amoveowallet.Data.Model.ContactsModel
 import donank.amoveowallet.Data.Model.TransactionModel
 import donank.amoveowallet.Data.Model.WalletModel
 import io.reactivex.Single
@@ -25,4 +26,10 @@ interface WalletDao {
 
     @Query("select * from wallet")
     fun getWallets(): Single<List<WalletModel>>
+
+    @Query("select * from contact")
+    fun getContacs(): Single<List<ContactsModel>>
+
+    @Insert
+    fun saveContact(contact: ContactsModel)
 }

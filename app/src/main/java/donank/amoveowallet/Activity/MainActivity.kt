@@ -5,13 +5,12 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import donank.amoveowallet.Utility.showFragment
 import donank.amoveowallet.Dagger.MainApplication
-import donank.amoveowallet.Fragments.Dashboard
 import donank.amoveowallet.R
 import kotlinx.android.synthetic.main.drawer_layout.*
 import android.support.v4.view.GravityCompat
 import android.view.MenuItem
-import donank.amoveowallet.Fragments.Peer
-import donank.amoveowallet.Fragments.Wallet
+import donank.amoveowallet.Fragments.*
+import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 
 class MainActivity : AppCompatActivity(){
@@ -43,28 +42,35 @@ class MainActivity : AppCompatActivity(){
                                 this,
                                 Dashboard::class.java.name
                         ),
-                        addToBackStack = false
+                        addToBackStack = true
                 )
                 R.id.nav_peer->showFragment(
                         Fragment.instantiate(
                                 this,
                                 Peer::class.java.name
                         ),
-                        addToBackStack = false
+                        addToBackStack = true
+                )
+                R.id.nav_participate->showFragment(
+                        Fragment.instantiate(
+                                this,
+                                Participate::class.java.name
+                        ),
+                        addToBackStack = true
                 )
                 R.id.nav_contacts->showFragment(
                         Fragment.instantiate(
                                 this,
-                                Wallet::class.java.name
+                                Contacts::class.java.name
                         ),
-                        addToBackStack = false
+                        addToBackStack = true
                 )
                 R.id.nav_settings->showFragment(
                         Fragment.instantiate(
                                 this,
-                                Dashboard::class.java.name
+                                Settings::class.java.name
                         ),
-                        addToBackStack = false
+                        addToBackStack = true
                 )
             }
             drawer_layout.closeDrawers()

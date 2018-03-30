@@ -21,6 +21,7 @@ import donank.amoveowallet.Data.Model.*
 import donank.amoveowallet.Data.Model.ViewModels.WalletListViewModel
 import donank.amoveowallet.Data.Model.ViewModels.WalletListViewModelFactory
 import donank.amoveowallet.databinding.ItemWalletBinding
+import kotlinx.android.synthetic.main.item_wallet.view.*
 import javax.inject.Inject
 
 class Dashboard : Fragment() {
@@ -47,13 +48,13 @@ class Dashboard : Fragment() {
                                             activity,
                                             Wallet::class.java.name
                                     ),
-                                    addToBackStack = false
+                                    addToBackStack = true
                             )
                         }
                         val addrLen = it.binding.item!!.address.length
-                        val first4 = it.binding.item!!.address.substring(0, 4)
-                        val last4 = it.binding.item!!.address.substring(addrLen - 4, addrLen)
-                        // it.itemView.tv_wallet_address.text = first4.plus("...").plus(last4)
+                        val first5 = it.binding.item!!.address.substring(0, 5)
+                        val last5 = it.binding.item!!.address.substring(addrLen - 6, addrLen)
+                        it.itemView.t_address.text = first5.plus("...").plus(last5)
                     }
                 }
                 .into(wallet_recycler)
@@ -68,6 +69,7 @@ class Dashboard : Fragment() {
         walletListViewModel.loadWallets()
 
         walletListViewModel.walletsResult().observe(this@Dashboard, Observer<List<WalletModel>>{
+            wallets.clear()
             wallets.addAll(it!!)
             lastAdapter.notifyDataSetChanged()
         })
@@ -85,7 +87,7 @@ class Dashboard : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        wallet_recycler.layoutManager = LinearLayoutManager(activity)
+        wallet_recycler.layoutManager = LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
         wallet_recycler.adapter = lastAdapter
 
         bottom_navigation.setOnNavigationItemSelectedListener(

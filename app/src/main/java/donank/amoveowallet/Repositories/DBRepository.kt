@@ -1,6 +1,7 @@
 package donank.amoveowallet.Repositories
 
 import android.os.AsyncTask
+import donank.amoveowallet.Data.Model.ContactsModel
 import donank.amoveowallet.Data.Model.WalletModel
 import donank.amoveowallet.Data.WalletDao
 import io.reactivex.Observable
@@ -28,6 +29,16 @@ class DBRepository @Inject constructor(val walletDao: WalletDao)  {
 
     fun getWallets(): Observable<List<WalletModel>> {
         return walletDao.getWallets().toObservable()
+    }
+
+    fun getContacts(): Observable<List<ContactsModel>> {
+        return walletDao.getContacs().toObservable()
+    }
+
+    fun saveContact(contact: ContactsModel) {
+        AsyncTask.execute{
+            walletDao.saveContact(contact)
+        }
     }
 
 }

@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class WalletListViewModel @Inject constructor(val mainRepository: MainRepository) : ViewModel() {
-    private var walletsSuccess = MutableLiveData<List<WalletModel>>()
-    var walletsError: MutableLiveData<String> = MutableLiveData()
+    private val walletsSuccess = MutableLiveData<List<WalletModel>>()
+    private val walletsError: MutableLiveData<String> = MutableLiveData()
 
     lateinit var disposableObserver: DisposableObserver<List<WalletModel>>
 
@@ -31,8 +31,8 @@ class WalletListViewModel @Inject constructor(val mainRepository: MainRepository
 
             }
 
-            override fun onNext(cryptocurrencies: List<WalletModel>) {
-                walletsSuccess.postValue(cryptocurrencies)
+            override fun onNext(wallets: List<WalletModel>) {
+                walletsSuccess.postValue(wallets)
             }
 
             override fun onError(e: Throwable) {

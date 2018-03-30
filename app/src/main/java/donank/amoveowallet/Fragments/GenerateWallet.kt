@@ -46,7 +46,7 @@ class GenerateWallet : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    edit_generate_account_name.setText("WalletModel".plus(it + 1))
+                    edit_generate_account_name.setText("Wallet".plus(it + 1))
                 }
         generate_new_btn.setOnClickListener {
 
