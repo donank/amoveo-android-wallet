@@ -3,6 +3,7 @@ package donank.amoveowallet.Dagger
 import android.app.Application
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.persistence.room.Room
+import com.commonsware.cwac.saferoom.SafeHelperFactory
 import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Module

@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/fragment_container"
-            android:background="#f3f3f3"/>
+            android:background="@color/backgroundWhite"/>
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appBar"
@@ -25,7 +25,7 @@
             android:background="@null">
 
             <android.support.v7.widget.Toolbar
-                app:titleTextColor="#585858"
+                app:titleTextColor="@color/greyTextColor"
                 android:id="@+id/toolbar"
                 android:background="@null"
                 android:theme="@style/AppTheme"
@@ -44,6 +44,7 @@
         android:fitsSystemWindows="true"
         android:layout_gravity="start"
         app:menu="@menu/drawer_menu"
+        app:itemTextColor="@color/greyTextColor"
         android:paddingTop="150dp"/>
 
 </android.support.v4.widget.DrawerLayout>
