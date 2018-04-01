@@ -51,7 +51,7 @@ class Wallet : Fragment() {
                 bottom_navigation_wallet.visibility = View.GONE
             }
             tv_wallet_address.text = it.address
-            tv_wallet_value.text = it.value.toString()
+            tv_wallet_value.text = it.value.toString().plus(" VEO")
         })
 
         bottom_navigation_wallet.setOnNavigationItemSelectedListener(
