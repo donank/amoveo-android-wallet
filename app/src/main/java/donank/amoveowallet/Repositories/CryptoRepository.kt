@@ -15,13 +15,14 @@ import java.security.*
 import org.spongycastle.util.encoders.Base64
 import org.spongycastle.util.encoders.Hex
 import java.io.ByteArrayOutputStream
+import java.text.NumberFormat
 
 
 class CryptoRepository {
 
 
     init {
-        Security.insertProviderAt(BouncyCastleProvider(),1)
+        Security.insertProviderAt(BouncyCastleProvider() as Provider,1)
     }
 
     private val EC_GEN_PARAM_SPEC = "secp256k1"
@@ -93,10 +94,13 @@ class CryptoRepository {
         return ""
     }
 
-    fun sign(data : String, key : ECPrivateKeyParameters): String {
+    fun sign(data: List<Any>, pKey: String): String {
+        Log.d("sign","$data -- $pKey")
+        Log.d("pkey - BigInteger","${BigInteger(pKey, HEX_RADIX)}")
+        val key = ECPrivateKeyParameters(BigInteger(pKey, HEX_RADIX),domain)
         var signatureBytes = byteArrayOf()
         try{
-            Log.d("data",data)
+            Log.d("data","$data")
             Log.d("Key",key.toString())
 
             val serializedData = serialize(data)
@@ -122,6 +126,7 @@ class CryptoRepository {
             signatureBytes = baos.toByteArray()
         }catch (e: Exception){
             Log.d("EXCEPTION WHILE SIGNING",e.message)
+            return "error"
         }
         return toHex(signatureBytes)
     }
@@ -148,74 +153,96 @@ class CryptoRepository {
     fun serialize(data : Any): Any {
         return when (data) {
             is Number -> {
+                Log.d("isNumber","$data")
                 return integerToArray(3,1).plus(integerToArray(data as Int,64))
             }
-            is Array<*> -> {
+            is List<*> -> {
                 when{
                     data[0] == -6 ->{
-                        val rest = serializeList(data.slice(1..1))
+                        Log.d("-6","${data[0]}")
+                        val rest = serializeList(data.slice(1..1).requireNoNulls())
+                        Log.d("-6-REST","$rest")
                         return (integerToArray(1,1)).plus(integerToArray(rest.size,4)).plus(rest)
                     }
 
                     data[0] == -7 ->{
-                        val rest = serializeList(data.slice(1..1))
+                        Log.d("-7","${data[0]}")
+                        val rest = serializeList(data.slice(1..1).requireNoNulls())
+                        Log.d("-7-REST","$rest")
                         return (integerToArray(2,1)).plus(integerToArray(rest.size,4)).plus(rest)
                     }
 
                     data[0] is String ->{
+                        Log.d("isString","${data[0]}")
                         val h = data[0] as String
-                        val d0 = data.slice(1..1)
+                        val d0 = data.subList(1,data.size)
                         val first = (integerToArray(4,1)).plus(integerToArray(h.length,4)).plus(stringToArray(h))
-                        val rest = first.plus(serializeList(d0))
+                        val rest = first.plus(serializeList(d0 as List<Any>))
+                        Log.d("isStringfirst","$first")
+                        Log.d("isStringrest","$rest")
                         return (integerToArray(2,1)).plus(integerToArray(rest.size,4)).plus(rest)
                     }
 
                     else -> {
-                        Log.d("SERIALIZE","ELSE")
+                        Log.d("ELSE SERIALIZE","NOTHING-${data[0]}")
                     }
                 }
             }
             is String -> {
+                Log.d("SERIALIZE BINARY STR","$data")
                 val rest = stringToArray(Base64.decode(data).toString())
+                Log.d("SERIALIZE BINARY REST","$rest")
                 return integerToArray(0,1).plus(integerToArray(rest.size,4)).plus(rest)
             }
             else -> {
-                val d = data as Array<Number>
+                Log.d("SERIALIZE BINARY NOTSTR","$data")
+                val d = data as List<Any>
                 return (integerToArray(0,1)).plus(integerToArray(d.size,4)).plus(d)
             }
         }
     }
 
-    fun integerToArray(num: Int, size: Int): Array<Number> {
+    fun integerToArray(num: Int, size: Int): List<Number> {
+        Log.d("integerToArray","$num-$size")
             var i = 0
             var a = num
-            val b = arrayOf<Number>()
+            val b = mutableListOf<Number>()
             while(i < size){
-                b.plus(((a%256)+256)%256)
+                b.add(((a%256)+256)%256)
                 a = Math.floor(a/256.0).toInt()
+                Log.d("i2a - a","$a")
                 i += 1
             }
-        return b.reversedArray()
+        Log.d("integerToArray-res","${b.reversed()}")
+        return b.reversed()
     }
 
-    fun stringToArray(s: String) : Array<Number> {
-        val a = arrayOf<Number>()
+    fun stringToArray(s: String) : List<Number> {
+        Log.d("stringToArray",s)
+
+        val a = mutableListOf<Number>()
         var i = 0
         while(i < s.length){
-            a[i] = s[i].toInt()
+            a.add(s[i].toInt())
             i += 1
         }
+        Log.d("stringToArray-res","$a")
         return a
     }
 
-    fun serializeList(d : Any): Array<Number> {
-        var m = arrayOf<Number>()
+    fun serializeList(d : List<Any>): List<Any> {
+        Log.d("serializeList","$d")
+        Log.d("serializeList-height","${d[1]}")
+        Log.d("heightIsdigit","${d[1].hashCode()}")
+        var m = mutableListOf<Any>()
         var i = 0
-        val l = d as List<*>
-        while(i > l.size){
-            m = m.plus(serialize(l[i]!!) as Array<Number>)
+        val l = d
+        while(i < l.size){
+            m.add(serialize(d[i]))
+            Log.d("sL - m","$m")
             i += 1
         }
+        Log.d("serializeList-res","$m")
         return m
     }
 
