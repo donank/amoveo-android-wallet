@@ -17,26 +17,29 @@ import net.glxn.qrgen.android.QRCode
 
 class Receive : Fragment() {
 
+    lateinit var walletModel : SelectedWalletViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity!!.application as MainApplication).component.inject(this)
 
-        val walletModel = ViewModelProviders.of(activity!!).get(SelectedWalletViewModel::class.java)
-        walletModel.getSelected().observe(this, Observer<WalletModel>{
-            tv_receive_address.text = it!!.address
-        })
+        walletModel = ViewModelProviders.of(activity!!).get(SelectedWalletViewModel::class.java)
     }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.fragment_receive, container, false)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        qr_image.setImageBitmap(generateQr(tv_receive_address.text.toString()))
+        walletModel.getSelected().observe(this, Observer<WalletModel>{
+            tv_receive_address.text = it!!.address
+            qr_image.setImageBitmap(generateQr(it.address))
+        })
+
     }
 
     fun generateQr(string: String): Bitmap {
-        return QRCode.from(string).bitmap()
+        val qrcode = QRCode.from(string).withSize(600,600).bitmap()
+        return qrcode
     }
 }

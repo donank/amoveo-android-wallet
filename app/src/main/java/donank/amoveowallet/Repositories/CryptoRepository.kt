@@ -4,7 +4,6 @@ import android.util.Log
 import org.spongycastle.asn1.ASN1Integer
 import org.spongycastle.asn1.DERSequenceGenerator
 import org.spongycastle.asn1.sec.SECNamedCurves
-import org.spongycastle.crypto.Signer
 import org.spongycastle.crypto.digests.SHA256Digest
 import org.spongycastle.crypto.generators.ECKeyPairGenerator
 import org.spongycastle.crypto.params.*
@@ -89,15 +88,9 @@ class CryptoRepository {
         return Pair(privParams,pubParams)
     }
 
-    //Generate transaction
-    //https://bitcoin.stackexchange.com/questions/52434/building-signed-bitcoin-transaction-in-java
-    //https://gist.github.com/Sjors/5574485
-    //https://stackoverflow.com/questions/34451214/how-to-sign-and-verify-signature-with-ecdsa-in-python
-    //https://bitcoin.stackexchange.com/questions/3374/how-to-redeem-a-basic-tx
-    //https://ebrary.net/7941/education/signing_bitcoin_transaction_using_ecdsa
 
-    fun generateTransaction(toAddress: String, amount: String) {
-
+    fun generateTransaction(toAddress: String, amount: String, password: String, res: String):String {
+        return ""
     }
 
     fun sign(data : String, key : ECPrivateKeyParameters): String {
@@ -106,10 +99,16 @@ class CryptoRepository {
             Log.d("data",data)
             Log.d("Key",key.toString())
 
+            val serializedData = serialize(data)
+            val hash = hash(serializedData as String)
+
+            Log.d("serializedData","$serializedData")
+            Log.d("hash","$hash")
+
             val signer = ECDSASigner(HMacDSAKCalculator(SHA256Digest()))
             signer.init(true,ECPrivateKeyParameters(key.d,domain))
 
-            val signature = signer.generateSignature(data.toByteArray())
+            val signature = signer.generateSignature(hash)
             val r = signature[0]
             val s = signature[1]
             val lowS = getLowValue(s)
@@ -142,8 +141,8 @@ class CryptoRepository {
 
     }
 
-    fun hash(data: String){
-
+    fun hash(data: String): ByteArray {
+        return SHA256Digest(data.toByteArray()).encodedState
     }
 
     fun serialize(data : Any): Any {
@@ -154,21 +153,21 @@ class CryptoRepository {
             is Array<*> -> {
                 when{
                     data[0] == -6 ->{
-                        val rest = serializeList(data.slice(1..1)) as List<*>
-                        return (integerToArray(1,1) as List<*>).plus(integerToArray(rest.size,4) as List<*>).plus(rest)
+                        val rest = serializeList(data.slice(1..1))
+                        return (integerToArray(1,1)).plus(integerToArray(rest.size,4)).plus(rest)
                     }
 
                     data[0] == -7 ->{
-                        val rest = serializeList(data.slice(1..1)) as List<*>
-                        return (integerToArray(2,1) as List<*>).plus(integerToArray(rest.size,4) as List<*>).plus(rest)
+                        val rest = serializeList(data.slice(1..1))
+                        return (integerToArray(2,1)).plus(integerToArray(rest.size,4)).plus(rest)
                     }
 
                     data[0] is String ->{
                         val h = data[0] as String
-                        val d0 = data.slice(1..1) as List<*>
-                        val first = (integerToArray(4,1) as List<*>).plus(integerToArray(h.length,4) as List<*>).plus(stringToArray(h))
+                        val d0 = data.slice(1..1)
+                        val first = (integerToArray(4,1)).plus(integerToArray(h.length,4)).plus(stringToArray(h))
                         val rest = first.plus(serializeList(d0))
-                        return (integerToArray(2,1) as List<*>).plus(integerToArray(rest.size,4) as List<*>).plus(rest)
+                        return (integerToArray(2,1)).plus(integerToArray(rest.size,4)).plus(rest)
                     }
 
                     else -> {
@@ -181,22 +180,22 @@ class CryptoRepository {
                 return integerToArray(0,1).plus(integerToArray(rest.size,4)).plus(rest)
             }
             else -> {
-                val d = data  as List<*>
-                return (integerToArray(0,1) as List<*>).plus(integerToArray(d.size,4) as List<*>).plus(d)
+                val d = data as Array<Number>
+                return (integerToArray(0,1)).plus(integerToArray(d.size,4)).plus(d)
             }
         }
     }
 
     fun integerToArray(num: Int, size: Int): Array<Number> {
-            var i = size
+            var i = 0
             var a = num
             val b = arrayOf<Number>()
-            while(i > 0){
+            while(i < size){
                 b.plus(((a%256)+256)%256)
                 a = Math.floor(a/256.0).toInt()
                 i += 1
             }
-        return b
+        return b.reversedArray()
     }
 
     fun stringToArray(s: String) : Array<Number> {
@@ -209,12 +208,12 @@ class CryptoRepository {
         return a
     }
 
-    fun serializeList(d : Any): Any {
-        var m = listOf<Any>()
+    fun serializeList(d : Any): Array<Number> {
+        var m = arrayOf<Number>()
         var i = 0
-        val l = d as List<Any>
+        val l = d as List<*>
         while(i > l.size){
-            m = m.plus(serialize(l[i]))
+            m = m.plus(serialize(l[i]!!) as Array<Number>)
             i += 1
         }
         return m

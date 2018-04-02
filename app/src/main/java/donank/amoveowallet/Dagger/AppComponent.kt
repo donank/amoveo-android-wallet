@@ -25,4 +25,5 @@ interface AppComponent {
     fun inject(dbRepository: DBRepository)
     fun inject(receive: Receive)
     fun inject(selectedContact: SelectedContact)
+    fun inject(send: Send)
 }

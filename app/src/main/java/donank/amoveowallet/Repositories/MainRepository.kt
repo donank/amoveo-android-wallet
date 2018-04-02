@@ -35,6 +35,12 @@ class MainRepository @Inject constructor(val dbRepository: DBRepository, val net
         return networkRepository.request(createRequestBody(command),url).map { it.string() }.toObservable()
     }
 
+    /*
+    fun testRequest(command: Array<String>,url: String = AppPref.peerUrl): Observable<Array<Map<String,Array<String>>>>{
+        return networkRepository.request(createRequestBody(command),url).map { it. }
+    }
+    */
+
     fun createRequestBody(command : String): RequestBody {
         return RequestBody.create(MediaType.parse("text/plain"), command)
     }

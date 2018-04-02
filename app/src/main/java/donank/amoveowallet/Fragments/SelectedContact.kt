@@ -71,7 +71,7 @@ class SelectedContact : Fragment() {
                                         activity,
                                         Contacts::class.java.name
                                 ),
-                                addToBackStack = true
+                                addToBackStack = false
                         )
 
                     }

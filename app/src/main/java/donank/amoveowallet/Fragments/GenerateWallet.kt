@@ -73,6 +73,13 @@ class GenerateWallet : Fragment() {
                     WalletType.SINGLE,
                     tv_generate_account_privkey.text.toString().replace("\\s","")
             ))
+            showFragment(
+                    Fragment.instantiate(
+                            activity,
+                            Dashboard::class.java.name
+                    ),
+                    addToBackStack = true
+            )
         }
     }
 

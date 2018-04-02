@@ -15,4 +15,12 @@ class NetworkRepository @Inject constructor(val restInterface: RESTInterface) {
                 .doOnSuccess { it }
                 .onErrorReturn { ResponseBody.create(MediaType.parse("text/plain"),"error")}
     }
+
+    /*
+    fun testRequest(command : Array<String>,url: String): Single<Array<String>>{
+        return restInterface.testRequest(command,url).subscribeOn(Schedulers.newThread())
+                .doOnSuccess {  }
+                .doOnError {  }
+    }
+    */
 }
