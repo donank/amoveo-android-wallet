@@ -1,5 +1,6 @@
 package donank.amoveowallet.Repositories
 
+import android.os.Build
 import android.util.Log
 import org.spongycastle.asn1.ASN1Integer
 import org.spongycastle.asn1.DERSequenceGenerator
@@ -13,9 +14,10 @@ import org.spongycastle.jce.provider.BouncyCastleProvider
 import java.math.BigInteger
 import java.security.*
 import org.spongycastle.util.encoders.Base64
+import org.spongycastle.util.encoders.Base64Encoder
 import org.spongycastle.util.encoders.Hex
 import java.io.ByteArrayOutputStream
-import java.text.NumberFormat
+import java.io.DataOutputStream
 
 
 class CryptoRepository {
@@ -98,15 +100,21 @@ class CryptoRepository {
         Log.d("sign","$data -- $pKey")
         Log.d("pkey - BigInteger","${BigInteger(pKey, HEX_RADIX)}")
         val key = ECPrivateKeyParameters(BigInteger(pKey, HEX_RADIX),domain)
-        var signatureBytes = byteArrayOf()
+        val signatureBytes: ByteArray
         try{
             Log.d("data","$data")
             Log.d("Key",key.toString())
 
-            val serializedData = serialize(data)
-            val hash = hash(serializedData as String)
+            val serializedData = serialize(data) as List<Int>
 
             Log.d("serializedData","$serializedData")
+            val baos1 = ByteArrayOutputStream()
+            val dout = DataOutputStream(baos1)
+            serializedData.forEach {
+                dout.write(it)
+            }
+            val hash = hash(baos1.toByteArray())
+
             Log.d("hash","$hash")
 
             val signer = ECDSASigner(HMacDSAKCalculator(SHA256Digest()))
@@ -128,6 +136,7 @@ class CryptoRepository {
             Log.d("EXCEPTION WHILE SIGNING",e.message)
             return "error"
         }
+        Log.d("SIGNATURE","${toHex(signatureBytes)}")
         return toHex(signatureBytes)
     }
 
@@ -142,19 +151,15 @@ class CryptoRepository {
         return s
     }
 
-    fun sign1(){
-
-    }
-
-    fun hash(data: String): ByteArray {
-        return SHA256Digest(data.toByteArray()).encodedState
+    fun hash(data: ByteArray): ByteArray {
+        return SHA256Digest(data).encodedState
     }
 
     fun serialize(data : Any): Any {
         return when (data) {
             is Number -> {
                 Log.d("isNumber","$data")
-                return integerToArray(3,1).plus(integerToArray(data as Int,64))
+                return integerToArray(3,1).plus(integerToArray(data as Long,64))
             }
             is List<*> -> {
                 when{
@@ -162,25 +167,26 @@ class CryptoRepository {
                         Log.d("-6","${data[0]}")
                         val rest = serializeList(data.slice(1..1).requireNoNulls())
                         Log.d("-6-REST","$rest")
-                        return (integerToArray(1,1)).plus(integerToArray(rest.size,4)).plus(rest)
+                        return (integerToArray(1,1)).plus(integerToArray(rest.size.toLong(),4)).plus(rest)
                     }
 
                     data[0] == -7 ->{
                         Log.d("-7","${data[0]}")
                         val rest = serializeList(data.slice(1..1).requireNoNulls())
-                        Log.d("-7-REST","$rest")
-                        return (integerToArray(2,1)).plus(integerToArray(rest.size,4)).plus(rest)
+                        //Log.d("-7-REST","$rest")
+                        return (integerToArray(2,1)).plus(integerToArray(rest.size.toLong(),4)).plus(rest)
                     }
 
                     data[0] is String ->{
                         Log.d("isString","${data[0]}")
                         val h = data[0] as String
                         val d0 = data.subList(1,data.size)
-                        val first = (integerToArray(4,1)).plus(integerToArray(h.length,4)).plus(stringToArray(h))
-                        val rest = first.plus(serializeList(d0 as List<Any>))
-                        Log.d("isStringfirst","$first")
-                        Log.d("isStringrest","$rest")
-                        return (integerToArray(2,1)).plus(integerToArray(rest.size,4)).plus(rest)
+                        val first = (integerToArray(4,1)).plus(integerToArray(h.length.toLong(),4)).plus(stringToArray(h))
+                        val rest = first.plus(serializeList(d0.requireNoNulls()))
+                        //Log.d("isStringfirst","$first")
+                        //Log.d("isStringrest","$rest")
+                        //Log.d("FINAL RETURN RESULT","${(integerToArray(2,1)).plus(integerToArray(rest.size.toLong(),4)).plus(rest)}")
+                        return (integerToArray(2,1)).plus(integerToArray(rest.size.toLong(),4)).plus(rest)
                     }
 
                     else -> {
@@ -190,31 +196,40 @@ class CryptoRepository {
             }
             is String -> {
                 Log.d("SERIALIZE BINARY STR","$data")
-                val rest = stringToArray(Base64.decode(data).toString())
-                Log.d("SERIALIZE BINARY REST","$rest")
-                return integerToArray(0,1).plus(integerToArray(rest.size,4)).plus(rest)
+                val outStream = ByteArrayOutputStream()
+                Base64Encoder().decode(data,outStream)
+                val rest = mutableListOf<Int>()
+                outStream.toByteArray().forEach {
+                    if(it <= 0){
+                        rest.add((it.toInt()+256))
+                    }
+                    else rest.add(it.toInt())
+                }
+                Log.d("rest","$rest")
+                outStream.close()
+                //Log.d("SERIALIZE BINARY REST","$rest")
+                return integerToArray(0,1).plus(integerToArray(rest.size.toLong(),4)).plus(rest)
             }
             else -> {
                 Log.d("SERIALIZE BINARY NOTSTR","$data")
                 val d = data as List<Any>
-                return (integerToArray(0,1)).plus(integerToArray(d.size,4)).plus(d)
+                return (integerToArray(0,1)).plus(integerToArray(d.size.toLong(),4)).plus(d)
             }
         }
     }
 
-    fun integerToArray(num: Int, size: Int): List<Number> {
+    fun integerToArray(num: Long, size: Int): List<Number> {
         Log.d("integerToArray","$num-$size")
             var i = 0
             var a = num
             val b = mutableListOf<Number>()
             while(i < size){
                 b.add(((a%256)+256)%256)
-                a = Math.floor(a/256.0).toInt()
-                Log.d("i2a - a","$a")
+                a = Math.floor(a/256.0).toLong()
                 i += 1
             }
-        Log.d("integerToArray-res","${b.reversed()}")
-        return b.reversed()
+        Log.d("integerToArray-res","$b")
+        return b
     }
 
     fun stringToArray(s: String) : List<Number> {
@@ -232,13 +247,14 @@ class CryptoRepository {
 
     fun serializeList(d : List<Any>): List<Any> {
         Log.d("serializeList","$d")
-        Log.d("serializeList-height","${d[1]}")
-        Log.d("heightIsdigit","${d[1].hashCode()}")
-        var m = mutableListOf<Any>()
+        val m = mutableListOf<Any>()
         var i = 0
         val l = d
         while(i < l.size){
-            m.add(serialize(d[i]))
+            val ser = serialize(d[i]) as List<*>
+            ser.forEach {
+                m.add(it as Any)
+            }
             Log.d("sL - m","$m")
             i += 1
         }

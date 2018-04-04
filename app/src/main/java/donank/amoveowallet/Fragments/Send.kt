@@ -68,7 +68,7 @@ class Send : Fragment() {
         walletModel.getSelected().observe(this, Observer<WalletModel>{
             send_btn.setOnClickListener {v->
                 val to = edit_send_addres.text.toString()
-                val amount = edit_send_amount.text.toString()
+                val amount = edit_send_amount.text.toString().toLong()
                 val fee = 152050L
                 val commandCreateAccountTx = "[\"create_account_tx\", $amount, $fee, \"${it!!.address}\", \"$to\"]"
                 val commandSpendTx = "[\"spend_tx\", $amount, $fee, \"${it.address}\", \"$to\"]"
@@ -85,10 +85,10 @@ class Send : Fragment() {
                                             val res1 = res.split(",")
                                             if(res1[0] == "[\"ok\""){
                                                 Log.d("CREATE ACC RES","$res1")
-                                                val resAmount = res1[6].split("]")[0]
+                                                val resAmount = res1[6].split("]")[0].toLong()
                                                 val resToAddress = res1[5].split("\"")[1]
                                                 val resFee = res1[4].toLong()
-                                                val resTxHeight = res1[3]
+                                                val resTxHeight = res1[3].toLong()
 
                                                 Log.d("resAmount","$resAmount")
                                                 Log.d("resToAddress","$resToAddress")
@@ -126,10 +126,10 @@ class Send : Fragment() {
                                             val res1 = res.split(",")
                                             if(res1[0] == "[\"ok\""){
                                                 Log.d("SPEND TX RES","$res1")
-                                                val resAmount = res1[6].split("]")[0]
+                                                val resAmount = res1[6].split("]")[0].toLong()
                                                 val resToAddress = res1[5].split("\"")[1]
                                                 val resFee = res1[4].toLong()
-                                                val resTxHeight = res1[3]
+                                                val resTxHeight = res1[3].toLong()
 
                                                 Log.d("resAmount","$resAmount")
                                                 Log.d("resToAddress","$resToAddress")

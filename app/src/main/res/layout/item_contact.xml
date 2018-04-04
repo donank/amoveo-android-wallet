@@ -20,6 +20,7 @@
             android:src="@drawable/ic_person_black_24dp"/>
 
         <TextView android:id="@+id/tv_contact_name"
+            android:textColor="@color/greyTextColor"
             android:paddingLeft="50dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

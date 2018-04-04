@@ -56,15 +56,16 @@ class SelectedContact : Fragment() {
                     edit_selected_contact_name.text.isEmpty() -> showInSnack(this.view!!,"Contact Name is Empty")
                     edit_selected_contact_address.text.isEmpty() -> showInSnack(this.view!!,"Contact Address is Empty")
                     else ->{
-                        val name = edit_selected_contact_name.text.toString()
-                        val address = edit_selected_contact_address.text.toString()
+                        it.name = edit_selected_contact_name.text.toString()
+                        it.pubkey = edit_selected_contact_address.text.toString()
                         Log.d("SelectedContact","$it")
                         if(it.edit){
                             Log.d("Inside","UPDATE")
-                            mainRepository.updateContact(ContactsModel(name,address))
+                            it.edit = false
+                            mainRepository.updateContact(it)
                         }else{
                             Log.d("Inside","SAVE")
-                            mainRepository.saveContactToDb(ContactsModel(name,address))
+                            mainRepository.saveContactToDb(it)
                         }
                         showFragment(
                                 Fragment.instantiate(

@@ -8,6 +8,7 @@ import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.R
 import kotlinx.android.synthetic.main.drawer_layout.*
 import android.support.v4.view.GravityCompat
+import android.support.v7.app.AlertDialog
 import android.view.MenuItem
 import donank.amoveowallet.Fragments.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
@@ -42,28 +43,28 @@ class MainActivity : AppCompatActivity(){
                                 this,
                                 Dashboard::class.java.name
                         ),
-                        addToBackStack = true
+                        addToBackStack = false
                 )
                 R.id.nav_peer->showFragment(
                         Fragment.instantiate(
                                 this,
                                 Peer::class.java.name
                         ),
-                        addToBackStack = true
+                        addToBackStack = false
                 )
                 R.id.nav_participate->showFragment(
                         Fragment.instantiate(
                                 this,
                                 Participate::class.java.name
                         ),
-                        addToBackStack = true
+                        addToBackStack = false
                 )
                 R.id.nav_contacts->showFragment(
                         Fragment.instantiate(
                                 this,
                                 Contacts::class.java.name
                         ),
-                        addToBackStack = true
+                        addToBackStack = false
                 )
                 R.id.nav_settings->showFragment(
                         Fragment.instantiate(
@@ -75,6 +76,20 @@ class MainActivity : AppCompatActivity(){
             }
             drawer_layout.closeDrawers()
             true
+        }
+    }
+
+    override fun onBackPressed() {
+        val count = supportFragmentManager.backStackEntryCount
+        if(count == 0){
+            AlertDialog.Builder(this)
+                    .setMessage("Do you want to exit?")
+                    .setPositiveButton("Yes"){_,_->finish()}
+                    .setNegativeButton("No"){_,_->}
+                    .create()
+                    .show()
+        }else {
+            supportFragmentManager.popBackStack()
         }
     }
 
