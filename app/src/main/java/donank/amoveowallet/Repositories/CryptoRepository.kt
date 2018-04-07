@@ -1,6 +1,5 @@
 package donank.amoveowallet.Repositories
 
-import android.os.Build
 import android.util.Log
 import org.spongycastle.asn1.ASN1Integer
 import org.spongycastle.asn1.DERSequenceGenerator
@@ -40,6 +39,7 @@ class CryptoRepository {
 
     val hexArray = "0123456789ABCDEF".toCharArray()
 
+    val signer = ECDSASigner(HMacDSAKCalculator(SHA256Digest()))
 
     fun toHex(data: ByteArray):String{
         return Hex.toHexString(data)
@@ -113,11 +113,14 @@ class CryptoRepository {
             serializedData.forEach {
                 dout.write(it)
             }
-            val hash = hash(baos1.toByteArray())
+            Log.d("baos1","$baos1")
+            Log.d("baos1String", String(baos1.toByteArray()))
+            val bArr = byteArrayOf()
+            baos1.write(bArr)
+            val hash = hash(bArr)
 
             Log.d("hash","$hash")
 
-            val signer = ECDSASigner(HMacDSAKCalculator(SHA256Digest()))
             signer.init(true,ECPrivateKeyParameters(key.d,domain))
 
             val signature = signer.generateSignature(hash)
@@ -137,7 +140,7 @@ class CryptoRepository {
             return "error"
         }
         Log.d("SIGNATURE","${toHex(signatureBytes)}")
-        return toHex(signatureBytes)
+        return Base64.toBase64String(signatureBytes)
     }
 
     private fun getLowValue(s: BigInteger): BigInteger {
@@ -152,7 +155,17 @@ class CryptoRepository {
     }
 
     fun hash(data: ByteArray): ByteArray {
-        return SHA256Digest(data).encodedState
+        Log.d("hash - input","$data")
+        var hash = byteArrayOf()
+        val digest = MessageDigest.getInstance("SHA-256")
+        try {
+            hash = digest.digest(data)
+            Log.d("SHA256Digest encoded","$hash")
+        }catch (e: Exception){
+            Log.d("Exception while hashing",e.message)
+        }
+        Log.d("hash - output","$data")
+        return hash
     }
 
     fun serialize(data : Any): Any {
@@ -260,6 +273,22 @@ class CryptoRepository {
         }
         Log.d("serializeList-res","$m")
         return m
+    }
+
+    fun verify(message: String, signature : String, pubkey: String): Boolean {
+        val sig =bin2rs(Base64.decode(signature))
+        val d2 = serialize(message)
+        val h = hash(d2 as ByteArray)
+        signer.init(false,ECPublicKeyParameters(curve.curve.decodePoint(pubkey.toByteArray()),domain))
+        return signer.verifySignature(h, BigInteger(sig.first), BigInteger(sig.second))
+    }
+
+    fun bin2rs(data: ByteArray): Pair<String, String> {
+        val h = toHex(data)
+        val a2 = data[3].toInt()
+        val r = h.slice(8..8+(a2*2))
+        val s = h.slice(12+(a2*2)..12+(a2*2))
+        return Pair(r,s)
     }
 
 }
