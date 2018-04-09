@@ -2,6 +2,9 @@ package donank.amoveowallet.Fragments
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.databinding.ObservableArrayList
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -17,6 +20,8 @@ import donank.amoveowallet.Data.Model.ViewModels.SelectedWalletViewModel
 import donank.amoveowallet.Data.Model.WalletModel
 import donank.amoveowallet.Data.Model.WalletType
 import donank.amoveowallet.R
+import donank.amoveowallet.Utility.copyToClipBoard
+import donank.amoveowallet.Utility.showInSnack
 import donank.amoveowallet.databinding.ItemTransactionBinding
 import kotlinx.android.synthetic.main.fragment_wallet.*
 
@@ -51,7 +56,7 @@ class Wallet : Fragment() {
                 bottom_navigation_wallet.visibility = View.GONE
             }
             tv_wallet_address.text = it.address
-            tv_wallet_value.text = it.value.toString().plus(" VEO")
+            tv_wallet_value.text = (it.value/100000000).toString().plus(" VEO")
         })
 
         bottom_navigation_wallet.setOnNavigationItemSelectedListener(
@@ -73,7 +78,13 @@ class Wallet : Fragment() {
                         )
                     }
                     true
+
                 })
+
+        copy_Address.setOnClickListener {
+            copyToClipBoard(tv_wallet_address.text.toString(),activity!!)
+            showInSnack(this.view!!,"Copied To Clipboard")
+        }
     }
 
     private fun showFragment(fragment: Fragment, addToBackStack: Boolean = true) {

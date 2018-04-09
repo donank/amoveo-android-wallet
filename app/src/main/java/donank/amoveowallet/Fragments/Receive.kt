@@ -12,6 +12,8 @@ import donank.amoveowallet.Dagger.MainApplication
 import donank.amoveowallet.Data.Model.ViewModels.SelectedWalletViewModel
 import donank.amoveowallet.Data.Model.WalletModel
 import donank.amoveowallet.R
+import donank.amoveowallet.Utility.copyToClipBoard
+import donank.amoveowallet.Utility.showInSnack
 import kotlinx.android.synthetic.main.fragment_receive.*
 import net.glxn.qrgen.android.QRCode
 
@@ -35,6 +37,11 @@ class Receive : Fragment() {
             tv_receive_address.text = it!!.address
             qr_image.setImageBitmap(generateQr(it.address))
         })
+
+        tv_receive_address.setOnClickListener {
+            copyToClipBoard(tv_receive_address.text.toString(),activity!!)
+            showInSnack(this.view!!,"Copied To Clipboard")
+        }
 
     }
 

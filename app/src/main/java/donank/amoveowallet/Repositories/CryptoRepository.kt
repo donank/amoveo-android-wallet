@@ -1,6 +1,8 @@
 package donank.amoveowallet.Repositories
 
 import android.util.Log
+import donank.amoveowallet.Data.AppPref
+import donank.amoveowallet.Utility.serialize
 import org.spongycastle.asn1.ASN1Integer
 import org.spongycastle.asn1.DERSequenceGenerator
 import org.spongycastle.asn1.sec.SECNamedCurves
@@ -13,10 +15,11 @@ import org.spongycastle.jce.provider.BouncyCastleProvider
 import java.math.BigInteger
 import java.security.*
 import org.spongycastle.util.encoders.Base64
-import org.spongycastle.util.encoders.Base64Encoder
 import org.spongycastle.util.encoders.Hex
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
+import javax.crypto.Cipher
+import javax.crypto.spec.SecretKeySpec
 
 
 class CryptoRepository {
@@ -92,15 +95,21 @@ class CryptoRepository {
     }
 
 
-    fun generateTransaction(toAddress: String, amount: String, password: String, res: String):String {
+    fun generateTransaction(tx: List<Any>, privateKey: String):String {
+        val sign = Base64.toBase64String(sign(tx,privateKey))
+        Log.d("SIGN",sign)
+        val pubkey = generatePubKey(privateKey)
+        Log.d("PUBKEY",pubkey)
+        val valid = verify(tx,sign,pubkey)
+        Log.d("VALID?","$valid")
         return ""
     }
 
-    fun sign(data: List<Any>, pKey: String): String {
+    fun sign(data: List<Any>, pKey: String): ByteArray {
         Log.d("sign","$data -- $pKey")
         Log.d("pkey - BigInteger","${BigInteger(pKey, HEX_RADIX)}")
         val key = ECPrivateKeyParameters(BigInteger(pKey, HEX_RADIX),domain)
-        val signatureBytes: ByteArray
+        var signatureBytes = byteArrayOf()
         try{
             Log.d("data","$data")
             Log.d("Key",key.toString())
@@ -137,10 +146,11 @@ class CryptoRepository {
             signatureBytes = baos.toByteArray()
         }catch (e: Exception){
             Log.d("EXCEPTION WHILE SIGNING",e.message)
-            return "error"
         }
-        Log.d("SIGNATURE","${toHex(signatureBytes)}")
-        return Base64.toBase64String(signatureBytes)
+        Log.d("SIGNATURE","$signatureBytes")
+        Log.d("SIGNATURE-TOHEX","${toHex(signatureBytes)}")
+        Log.d("SIGNATURE-BASE64","${Base64.toBase64String(signatureBytes)}")
+        return signatureBytes
     }
 
     private fun getLowValue(s: BigInteger): BigInteger {
@@ -168,117 +178,19 @@ class CryptoRepository {
         return hash
     }
 
-    fun serialize(data : Any): Any {
-        return when (data) {
-            is Number -> {
-                Log.d("isNumber","$data")
-                return integerToArray(3,1).plus(integerToArray(data as Long,64))
-            }
-            is List<*> -> {
-                when{
-                    data[0] == -6 ->{
-                        Log.d("-6","${data[0]}")
-                        val rest = serializeList(data.slice(1..1).requireNoNulls())
-                        Log.d("-6-REST","$rest")
-                        return (integerToArray(1,1)).plus(integerToArray(rest.size.toLong(),4)).plus(rest)
-                    }
-
-                    data[0] == -7 ->{
-                        Log.d("-7","${data[0]}")
-                        val rest = serializeList(data.slice(1..1).requireNoNulls())
-                        //Log.d("-7-REST","$rest")
-                        return (integerToArray(2,1)).plus(integerToArray(rest.size.toLong(),4)).plus(rest)
-                    }
-
-                    data[0] is String ->{
-                        Log.d("isString","${data[0]}")
-                        val h = data[0] as String
-                        val d0 = data.subList(1,data.size)
-                        val first = (integerToArray(4,1)).plus(integerToArray(h.length.toLong(),4)).plus(stringToArray(h))
-                        val rest = first.plus(serializeList(d0.requireNoNulls()))
-                        //Log.d("isStringfirst","$first")
-                        //Log.d("isStringrest","$rest")
-                        //Log.d("FINAL RETURN RESULT","${(integerToArray(2,1)).plus(integerToArray(rest.size.toLong(),4)).plus(rest)}")
-                        return (integerToArray(2,1)).plus(integerToArray(rest.size.toLong(),4)).plus(rest)
-                    }
-
-                    else -> {
-                        Log.d("ELSE SERIALIZE","NOTHING-${data[0]}")
-                    }
-                }
-            }
-            is String -> {
-                Log.d("SERIALIZE BINARY STR","$data")
-                val outStream = ByteArrayOutputStream()
-                Base64Encoder().decode(data,outStream)
-                val rest = mutableListOf<Int>()
-                outStream.toByteArray().forEach {
-                    if(it <= 0){
-                        rest.add((it.toInt()+256))
-                    }
-                    else rest.add(it.toInt())
-                }
-                Log.d("rest","$rest")
-                outStream.close()
-                //Log.d("SERIALIZE BINARY REST","$rest")
-                return integerToArray(0,1).plus(integerToArray(rest.size.toLong(),4)).plus(rest)
-            }
-            else -> {
-                Log.d("SERIALIZE BINARY NOTSTR","$data")
-                val d = data as List<Any>
-                return (integerToArray(0,1)).plus(integerToArray(d.size.toLong(),4)).plus(d)
-            }
-        }
-    }
-
-    fun integerToArray(num: Long, size: Int): List<Number> {
-        Log.d("integerToArray","$num-$size")
-            var i = 0
-            var a = num
-            val b = mutableListOf<Number>()
-            while(i < size){
-                b.add(((a%256)+256)%256)
-                a = Math.floor(a/256.0).toLong()
-                i += 1
-            }
-        Log.d("integerToArray-res","$b")
-        return b
-    }
-
-    fun stringToArray(s: String) : List<Number> {
-        Log.d("stringToArray",s)
-
-        val a = mutableListOf<Number>()
-        var i = 0
-        while(i < s.length){
-            a.add(s[i].toInt())
-            i += 1
-        }
-        Log.d("stringToArray-res","$a")
-        return a
-    }
-
-    fun serializeList(d : List<Any>): List<Any> {
-        Log.d("serializeList","$d")
-        val m = mutableListOf<Any>()
-        var i = 0
-        val l = d
-        while(i < l.size){
-            val ser = serialize(d[i]) as List<*>
-            ser.forEach {
-                m.add(it as Any)
-            }
-            Log.d("sL - m","$m")
-            i += 1
-        }
-        Log.d("serializeList-res","$m")
-        return m
-    }
-
-    fun verify(message: String, signature : String, pubkey: String): Boolean {
+    fun verify(message: Any, signature : String, pubkey: String): Boolean {
         val sig =bin2rs(Base64.decode(signature))
-        val d2 = serialize(message)
-        val h = hash(d2 as ByteArray)
+        val d2 = serialize(message) as List<Int>
+        val baos = ByteArrayOutputStream()
+        val dout = DataOutputStream(baos)
+        d2.forEach {
+            dout.write(it)
+        }
+        Log.d("baos1","$baos")
+        Log.d("baos1String", String(baos.toByteArray()))
+        val bArr = byteArrayOf()
+        baos.write(bArr)
+        val h = hash(bArr)
         signer.init(false,ECPublicKeyParameters(curve.curve.decodePoint(pubkey.toByteArray()),domain))
         return signer.verifySignature(h, BigInteger(sig.first), BigInteger(sig.second))
     }
@@ -289,6 +201,28 @@ class CryptoRepository {
         val r = h.slice(8..8+(a2*2))
         val s = h.slice(12+(a2*2)..12+(a2*2))
         return Pair(r,s)
+    }
+
+    fun encrypt(data: String, userKey : String = AppPref.passcode): String {
+        val key = generateKey(userKey.toByteArray())
+        val cipher = Cipher.getInstance("AES","BC")
+        cipher.init(Cipher.ENCRYPT_MODE, key)
+        val encrypted = cipher.doFinal(data.toByteArray())
+        val encryptedValue = Base64.encode(encrypted)
+        return String(encryptedValue)
+    }
+
+    fun decrypt(data: String, userKey : String = AppPref.passcode): String {
+        val key = generateKey(userKey.toByteArray())
+        val cipher = Cipher.getInstance("AES","BC")
+        cipher.init(Cipher.DECRYPT_MODE,key)
+        val decodeBytes = Base64.decode(data.toByteArray())
+        val original = cipher.doFinal(decodeBytes)
+        return String(original)
+    }
+
+    fun generateKey(key: ByteArray): Key{
+            return SecretKeySpec(key,"AES")
     }
 
 }

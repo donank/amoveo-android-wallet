@@ -3,6 +3,7 @@ package donank.amoveowallet.Dagger
 import android.app.Application
 import dagger.Component
 import donank.amoveowallet.Activity.MainActivity
+import donank.amoveowallet.Activity.SplashActivity
 import donank.amoveowallet.Fragments.*
 import donank.amoveowallet.Repositories.DBRepository
 import javax.inject.Singleton
@@ -26,4 +27,8 @@ interface AppComponent {
     fun inject(receive: Receive)
     fun inject(selectedContact: SelectedContact)
     fun inject(send: Send)
+    fun inject(splashActivity: SplashActivity)
+    fun inject(splashFragment: SplashFragment) {
+
+    }
 }

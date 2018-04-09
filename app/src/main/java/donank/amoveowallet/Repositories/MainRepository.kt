@@ -11,7 +11,9 @@ import javax.inject.Inject
 
 class MainRepository @Inject constructor(val dbRepository: DBRepository, val networkRepository: NetworkRepository) {
 
+    val cryptoRepository = CryptoRepository()
     fun saveWalletToDb(walletModel : WalletModel){
+        walletModel.password = cryptoRepository.encrypt(walletModel.password)
         dbRepository.saveWalletToDb(walletModel)
     }
 

@@ -177,8 +177,9 @@ class Send : Fragment() {
 
     fun spendTokens(tx: List<Any>,privateKey : String) {
         Log.d("Spend","$tx")
-        val signedTx = cryptoRepository.sign(tx,privateKey)
-        Log.d("SIGNED TX","$signedTx")
+        val privKey = cryptoRepository.decrypt(privateKey)
+        val signedTx = cryptoRepository.generateTransaction(tx,privKey)
+        Log.d("SIGNED TX",signedTx)
         val publishTxCommand = "[\"txs\", [-6, $signedTx]]"
         //mainRepository.request(publishTxCommand)
     }

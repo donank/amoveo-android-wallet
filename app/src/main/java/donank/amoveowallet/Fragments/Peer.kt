@@ -43,6 +43,8 @@ class Peer : Fragment() {
         super.onActivityCreated(savedInstanceState)
         edit_peer.setText(AppPref.peerUrl)
 
+        tv_height.text = AppPref.height
+
         edit_peer_btn.setOnClickListener {
             edit_peer.isEnabled = true
             submit_peer_btn.isEnabled = false
@@ -60,7 +62,8 @@ class Peer : Fragment() {
                             .subscribe {
                         val res = it.replace("\\s+","").split(",")
                         if(res[0] == "[\"ok\""){
-                            tv_height.text = res[1].split("]").first()
+                            AppPref.height = res[1].split("]").first()
+                            tv_height.text = AppPref.height
                             edit_peer.isEnabled = false
                             submit_peer_btn.isEnabled = true
                             showInSnack(this.view!!,"Verified")
@@ -78,6 +81,7 @@ class Peer : Fragment() {
             if(!edit_peer.text.isEmpty()){
                 submit_peer_btn.isEnabled = false
                 AppPref.peerUrl = edit_peer.text.toString()
+                showInSnack(this.view!!,"Saved")
             }else{
                 showInSnack(this.view!!,"Invalid Peer")
             }
