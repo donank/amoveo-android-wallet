@@ -9,6 +9,7 @@ import donank.amoveowallet.R
 import kotlinx.android.synthetic.main.drawer_layout.*
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AlertDialog
+import android.util.Log
 import android.view.MenuItem
 import donank.amoveowallet.Fragments.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
@@ -107,5 +108,10 @@ class MainActivity : AppCompatActivity(){
                 fragmentManager = supportFragmentManager,
                 addToBackStack = addToBackStack)
     }
+    override fun onStart(){
+        super.onStart()
+        Log.d("MAINACTIVITY","STARTED")
+    }
+
 
 }

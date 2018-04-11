@@ -79,8 +79,17 @@ class WatchWallet : Fragment() {
                             ""
                     )
             )
+            showFragment(
+                    Fragment.instantiate(
+                            activity,
+                            Dashboard::class.java.name
+                    ),
+                    addToBackStack = true
+            )
         }
 
+        watch_scan_address_btn.setOnClickListener {
+        }
     }
 
     fun getWalletDetails(inputAddress : String){

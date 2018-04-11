@@ -40,14 +40,14 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support:support-compat:27.1.0'
-    implementation 'com.android.support:support-v13:27.1.0'
-    implementation 'com.android.support:design:27.1.0'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:support-compat:27.1.1'
+    implementation 'com.android.support:support-v13:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
 
     //card_view
-    implementation 'com.android.support:cardview-v7:27.1.0'
-    implementation 'com.android.support:recyclerview-v7:27.1.0'
+    implementation 'com.android.support:cardview-v7:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
 
     //kotpref - SharedPreferences
     implementation "com.chibatching.kotpref:kotpref:$kotpref_version"

@@ -48,7 +48,6 @@ class Send : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-
         /*
         * ["ok",
         * ["spend",
@@ -172,6 +171,10 @@ class Send : Fragment() {
                     ),
                     addToBackStack = true
             )
+        }
+
+        scan_address_btn.setOnClickListener {
+
         }
     }
 

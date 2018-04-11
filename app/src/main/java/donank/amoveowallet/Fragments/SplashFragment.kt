@@ -3,6 +3,7 @@ package donank.amoveowallet.Fragments
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,6 +50,7 @@ class SplashFragment : Fragment() {
                 edit_reg_passcode_2.text.isNullOrEmpty() -> showInSnack(this.view!!, "Input is Empty.")
                 edit_reg_passcode_2.text.toString() == edit_reg_passcode_1.text.toString() -> {
                     AppPref.passcode = edit_reg_passcode_2.text.toString()
+                    AppPref.accountExists = true
                     startActivity(Intent(activity, MainActivity::class.java))
                 }
                 else -> showInSnack(this.view!!, "Entered passcode is different from previous input.")
@@ -68,4 +70,5 @@ class SplashFragment : Fragment() {
             }
         }
     }
+
 }
