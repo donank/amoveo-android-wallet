@@ -84,10 +84,7 @@ fun serialize(data : Any): Any {
             Base64Encoder().decode(data,outStream)
             val rest = mutableListOf<Int>()
             outStream.toByteArray().forEach {
-                if(it <= 0){
-                    rest.add((it.toInt()+256))
-                }
-                else rest.add(it.toInt())
+                rest.add(it.toInt())
             }
             Log.d("rest","$rest")
             outStream.close()
@@ -112,8 +109,8 @@ fun integerToArray(num: Long, size: Int): List<Number> {
         a = Math.floor(a/256.0).toLong()
         i += 1
     }
-    Log.d("integerToArray-res","$b")
-    return b
+    Log.d("integerToArray-res","${b.reversed()}")
+    return b.reversed()
 }
 
 fun stringToArray(s: String) : List<Number> {
@@ -133,8 +130,7 @@ fun serializeList(d : List<Any>): List<Any> {
     Log.d("serializeList","$d")
     val m = mutableListOf<Any>()
     var i = 0
-    val l = d
-    while(i < l.size){
+    while(i < d.size){
         val ser = serialize(d[i]) as List<*>
         ser.forEach {
             m.add(it as Any)
@@ -144,4 +140,16 @@ fun serializeList(d : List<Any>): List<Any> {
     }
     Log.d("serializeList-res","$m")
     return m
+}
+
+fun arrayToString(data : ByteArray):String{
+    Log.d("arrayToString - data","$data")
+    var a = ""
+    var i = 0
+    while(i<data.size){
+        a += data[i].toChar()
+        i += 1
+    }
+    Log.d("arrayToString - return",a)
+    return a
 }

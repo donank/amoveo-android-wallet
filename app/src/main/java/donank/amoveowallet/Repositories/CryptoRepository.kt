@@ -4,6 +4,7 @@ import android.util.Log
 import donank.amoveowallet.Data.AppPref
 import donank.amoveowallet.Utility.serialize
 import org.spongycastle.asn1.ASN1Integer
+import org.spongycastle.asn1.DERInteger
 import org.spongycastle.asn1.DERSequenceGenerator
 import org.spongycastle.asn1.sec.SECNamedCurves
 import org.spongycastle.crypto.digests.SHA256Digest
@@ -81,6 +82,7 @@ class CryptoRepository {
             } catch (e: Exception) {
                 return false
             }
+
         }
         return true
     }
@@ -95,12 +97,16 @@ class CryptoRepository {
 
 
     fun generateTransaction(tx: List<Any>, privateKey: String): String {
-        val sign = Base64.toBase64String(sign(tx, privateKey))
-        Log.d("SIGN", sign)
-        val pubkey = generatePubKey(privateKey)
-        Log.d("PUBKEY", pubkey)
-        val valid = verify(tx, sign, pubkey)
-        Log.d("VALID?", "$valid")
+        val sign = sign(tx, privateKey)
+
+        sign.forEach {
+            Log.d("$it","b")
+        }
+
+        sign.toTypedArray().forEach {
+            Log.d("$it","+")
+        }
+
         return ""
     }
 
@@ -108,47 +114,82 @@ class CryptoRepository {
         Log.d("sign", "$data -- $pKey")
         Log.d("pkey - BigInteger", "${BigInteger(pKey, HEX_RADIX)}")
         val key = ECPrivateKeyParameters(BigInteger(pKey, HEX_RADIX), domain)
-        var signatureBytes = byteArrayOf()
+        val signatureBytes = byteArrayOf()
         try {
             Log.d("data", "$data")
             Log.d("Key", key.toString())
 
-            val serializedData = serialize(data) as List<Int>
+            val serializedData = serialize(data) as List<Byte>
 
             Log.d("serializedData", "$serializedData")
-            val baos1 = ByteArrayOutputStream()
-            val dout = DataOutputStream(baos1)
-            serializedData.forEach {
-                dout.write(it)
-            }
-            Log.d("baos1", "$baos1")
-            Log.d("baos1String", String(baos1.toByteArray()))
-            val bArr = byteArrayOf()
-            baos1.write(bArr)
-            val hash = hash(bArr)
 
-            Log.d("hash", "$hash")
+
+            Log.d("serializedData", "tobarr")
+            val baos1 = ByteArrayOutputStream()
+            serializedData.toByteArray().forEach{
+                if(it < 0){
+                    baos1.write(it + 256)
+                    Log.d("$it", "${it + 256}")
+                }else baos1.write(it.toInt())
+            }
+
+            Log.d("baos1tobarr","${baos1.toByteArray()}")
+            Log.d("serializedDatatobarr","${serializedData.toByteArray()}")
+            val hash = hash(baos1.toByteArray())
+            Log.d("baos1-size","${baos1.size()}")
+            baos1.reset()
+            baos1.close()
+            Log.d("baos1","close")
+            Log.d("baos1-size","${baos1.size()}")
+
+            hash.forEach {
+                if(it < 0){
+                    baos1.write(it + 256)
+                    Log.d("$it", "${it + 256}")
+                }else {
+                    Log.d("$it", " + ")
+                    baos1.write(it.toInt())
+                }
+            }
+
+            val finaltxHash = baos1.toByteArray()
+
+            Log.d("baos1-size","${baos1.size()}")
+            baos1.reset()
+            baos1.close()
+            Log.d("baos1","close")
+            Log.d("baos1-size","${baos1.size()}")
 
             signer.init(true, ECPrivateKeyParameters(key.d, domain))
 
-            val signature = signer.generateSignature(hash)
+            val signature = signer.generateSignature(finaltxHash)
             val r = signature[0]
             val s = signature[1]
             val lowS = getLowValue(s)
-            val baos = ByteArrayOutputStream()
-            val derSequenceGenerator = DERSequenceGenerator(baos)
-            val as1nr = ASN1Integer(r)
-            val asn1LowS = ASN1Integer(lowS)
+            val derSequenceGenerator = DERSequenceGenerator(baos1)
+            val as1nr = DERInteger(r)
+            val asn1LowS = DERInteger(s)
             derSequenceGenerator.addObject(as1nr)
             derSequenceGenerator.addObject(asn1LowS)
             derSequenceGenerator.close()
-            signatureBytes = baos.toByteArray()
+
+            Log.d("baos1","forEach")
+            baos1.toByteArray().forEach {
+                Log.d("$it","b")
+            }
+            baos1.write(signatureBytes)
+            Log.d("signatureBytes","forEach")
+            signatureBytes.forEach {
+                Log.d("$it","s")
+            }
+            Log.d("signatureBytes","$signatureBytes")
+            Log.d("signatureBytesbaos","${baos1.toByteArray()}")
+
+            baos1.reset()
+            baos1.close()
         } catch (e: Exception) {
             Log.d("EXCEPTION WHILE SIGNING", e.message)
         }
-        Log.d("SIGNATURE", "$signatureBytes")
-        Log.d("SIGNATURE-TOHEX", "${toHex(signatureBytes)}")
-        Log.d("SIGNATURE-BASE64", "${Base64.toBase64String(signatureBytes)}")
         return signatureBytes
     }
 
@@ -165,15 +206,15 @@ class CryptoRepository {
 
     fun hash(data: ByteArray): ByteArray {
         Log.d("hash - input", "$data")
+
         var hash = byteArrayOf()
         val digest = MessageDigest.getInstance("SHA-256")
         try {
             hash = digest.digest(data)
-            Log.d("SHA256Digest encoded", "$hash")
         } catch (e: Exception) {
             Log.d("Exception while hashing", e.message)
         }
-        Log.d("hash - output", "$data")
+        Log.d("hash - output", "$hash")
         return hash
     }
 
@@ -190,8 +231,16 @@ class CryptoRepository {
         val bArr = byteArrayOf()
         baos.write(bArr)
         val h = hash(bArr)
-        signer.init(false, ECPublicKeyParameters(curve.curve.decodePoint(pubkey.toByteArray()), domain))
-        return signer.verifySignature(h, BigInteger(sig.first), BigInteger(sig.second))
+        Log.d("pubkey",pubkey)
+        Log.d("pubkey-bytearr","${pubkey.toByteArray()}")
+        Log.d("pubkey-bytearr-utf","${pubkey.toByteArray(Charsets.UTF_8)}")
+        signer.init(false, ECPublicKeyParameters(curve.curve.decodePoint(pubkey.toByteArray(Charsets.UTF_8)), domain))
+        Log.d("h","$h")
+        Log.d("BigInteger(sig.first)","${BigInteger(sig.first)}")
+        Log.d("BigInteger(sig.second)","${BigInteger(sig.second)}")
+        val verif = signer.verifySignature(h, BigInteger(sig.first), BigInteger(sig.second))
+        Log.d("verif","$verif")
+        return verif
     }
 
     fun bin2rs(data: ByteArray): Pair<String, String> {
@@ -221,7 +270,7 @@ class CryptoRepository {
     }
 
     fun generateKey(key: ByteArray): Key {
-        val hashedKey = MessageDigest.getInstance("SHA256").digest(key)
+        val hashedKey = hash(key)
         val keyArr = Arrays.copyOf(hashedKey, 16)
         return SecretKeySpec(keyArr, "AES")
     }

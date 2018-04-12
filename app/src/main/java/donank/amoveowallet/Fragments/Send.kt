@@ -64,6 +64,9 @@ class Send : Fragment() {
         * "BDsdrsGQjzfqLn5id3qIOZxyjtQ5S3lzCGYKKSaccxa7U0wL7UdxNVMdswcmssG9ZQ0PZ3u+qkAx6WIWEFTgCwM=",
         * 10000000]]
         */
+
+        edit_send_addres.setText("BKdkHXUeBIgzqyQ0morfNcw2AKIc/n1NAt0pK34ESnaC62mpSSMAqMsArWIqcyWWACdIL9r82UhnuUJIbueRH04=")
+        edit_send_amount.setText("4000000")
         walletModel.getSelected().observe(this, Observer<WalletModel>{
             send_btn.setOnClickListener {v->
                 val to = edit_send_addres.text.toString()
