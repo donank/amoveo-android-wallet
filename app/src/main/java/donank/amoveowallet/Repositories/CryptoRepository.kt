@@ -4,14 +4,12 @@ import android.util.Log
 import donank.amoveowallet.Data.AppPref
 import donank.amoveowallet.Utility.serialize
 import org.spongycastle.asn1.ASN1Integer
-import org.spongycastle.asn1.DERInteger
 import org.spongycastle.asn1.DERSequenceGenerator
 import org.spongycastle.asn1.sec.SECNamedCurves
-import org.spongycastle.crypto.digests.SHA256Digest
+import org.spongycastle.crypto.digests.SHA1Digest
 import org.spongycastle.crypto.generators.ECKeyPairGenerator
 import org.spongycastle.crypto.params.*
 import org.spongycastle.crypto.signers.ECDSASigner
-import org.spongycastle.crypto.signers.HMacDSAKCalculator
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import java.math.BigInteger
 import java.security.*
@@ -22,6 +20,10 @@ import java.io.DataOutputStream
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
+import org.spongycastle.crypto.digests.SHA256Digest
+import org.spongycastle.crypto.signers.HMacDSAKCalculator
+
+
 
 
 class CryptoRepository {
@@ -129,12 +131,9 @@ class CryptoRepository {
             serializedData.toByteArray().forEach{
                 if(it < 0){
                     baos1.write(it + 256)
-                    Log.d("$it", "${it + 256}")
                 }else baos1.write(it.toInt())
             }
 
-            Log.d("baos1tobarr","${baos1.toByteArray()}")
-            Log.d("serializedDatatobarr","${serializedData.toByteArray()}")
             val hash = hash(baos1.toByteArray())
             Log.d("baos1-size","${baos1.size()}")
             baos1.reset()
@@ -164,13 +163,22 @@ class CryptoRepository {
 
             val signature = signer.generateSignature(finaltxHash)
             val r = signature[0]
+            Log.d("r","$r")
             val s = signature[1]
+            Log.d("s","$s")
             val lowS = getLowValue(s)
+            Log.d("lowS","$lowS")
             val derSequenceGenerator = DERSequenceGenerator(baos1)
-            val as1nr = DERInteger(r)
-            val asn1LowS = DERInteger(s)
+            val as1nr = ASN1Integer(r)
+            Log.d("as1nr","$as1nr")
+            val asn1LowS = ASN1Integer(s)
+            Log.d("asn1LowS","$asn1LowS")
+            val asn2LowS = ASN1Integer(lowS)
+            Log.d("asn2LowS","$asn2LowS")
             derSequenceGenerator.addObject(as1nr)
-            derSequenceGenerator.addObject(asn1LowS)
+            Log.d("addObject(as1nr)","${derSequenceGenerator.rawOutputStream}")
+            derSequenceGenerator.addObject(asn2LowS)
+            Log.d("addObject(asn1LowS)","${derSequenceGenerator.rawOutputStream}")
             derSequenceGenerator.close()
 
             Log.d("baos1","forEach")
@@ -179,9 +187,6 @@ class CryptoRepository {
             }
             baos1.write(signatureBytes)
             Log.d("signatureBytes","forEach")
-            signatureBytes.forEach {
-                Log.d("$it","s")
-            }
             Log.d("signatureBytes","$signatureBytes")
             Log.d("signatureBytesbaos","${baos1.toByteArray()}")
 
@@ -266,6 +271,7 @@ class CryptoRepository {
         cipher.init(Cipher.DECRYPT_MODE, key)
         val decodeBytes = Base64.decode(data.toByteArray(Charsets.UTF_8))
         val original = cipher.doFinal(decodeBytes)
+        Log.d("decrypt|d - $data p - $userKey",String(original))
         return String(original)
     }
 
